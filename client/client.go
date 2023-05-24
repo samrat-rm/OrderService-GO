@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	port = ":8082"
+	port = ":8091"
 )
 
 type ProductServiceClient struct {
@@ -19,12 +19,11 @@ type ProductServiceClient struct {
 
 func InitProductServiceClient() pb.ProductServiceClient {
 	conn, err := grpc.Dial("localhost"+port, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	// defer conn.Close()
 
 	if err != nil {
 		log.Fatalf("Failed to connect to server %v", err.Error())
 	}
-
-	// defer conn.Close()
 
 	return pb.NewProductServiceClient(conn)
 }

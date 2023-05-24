@@ -1,7 +1,7 @@
 package product
 
 import (
-	"fmt"
+	"log"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -15,7 +15,7 @@ const ProductDNS = "root:@tcp(localhost:3306)/quickmart?charset=utf8mb4&parseTim
 func InitialMigrationProduct() {
 	DBProduct, errProduct = gorm.Open(mysql.Open(ProductDNS), &gorm.Config{})
 	if errProduct != nil {
-		fmt.Println(errProduct.Error())
+		log.Fatal(errProduct.Error())
 		panic("Cannot connect to DB")
 	}
 	DBProduct.AutoMigrate(&Product{}) // creates table if no there
