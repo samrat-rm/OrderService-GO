@@ -10,7 +10,7 @@ type ProductDTO struct {
 	Available   bool    `json:"available"`
 }
 
-type Error struct {
+type ErrorDTO struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
 }
