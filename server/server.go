@@ -47,6 +47,7 @@ func (s *ProductServiceServer) GetAllProducts(ctx context.Context, req *pb.NoPar
 
 	return &productList, nil
 }
+
 func (s *ProductServiceServer) GetProduct(ctx context.Context, req *pb.ProductIdRequest) (*pb.Product, error) {
 	productID := req.Id
 	product, err := client.GetProduct((productID))
@@ -64,6 +65,7 @@ func (s *ProductServiceServer) GetProduct(ctx context.Context, req *pb.ProductId
 		Price:       int32(product.Price),
 	}, nil
 }
+
 func (s *ProductServiceServer) DeleteProduct(ctx context.Context, req *pb.ProductIdRequest) (*pb.ProductIdRequest, error) {
 	productID := req.Id
 	err := client.DeleteProduct(productID)

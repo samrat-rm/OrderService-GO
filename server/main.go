@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	port = ":8082"
+	port = ":8091"
 )
 
 type ProductServiceServer struct {
