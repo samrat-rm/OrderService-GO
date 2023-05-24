@@ -1,4 +1,4 @@
-package client
+package routes
 
 import (
 	"github.com/gorilla/mux"
@@ -6,6 +6,6 @@ import (
 
 func NewRouter() *mux.Router {
 	router := mux.NewRouter()
-
+	RegisterProductRoutes(router)
 	return router
 }
