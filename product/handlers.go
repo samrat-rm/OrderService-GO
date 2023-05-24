@@ -17,7 +17,7 @@ func GetAllProducts() ([]Product, error) {
 	return products, nil
 }
 
-func GetProduct(id int32) (*Product, error) {
+func GetProduct(id string) (*Product, error) {
 	var product Product
 	result := DBProduct.First(&product, id)
 	if result.Error != nil {
@@ -26,7 +26,7 @@ func GetProduct(id int32) (*Product, error) {
 	return &product, nil
 }
 
-func DeleteProduct(id int32) error {
+func DeleteProduct(id string) error {
 	result := DBProduct.Delete(&Product{}, id)
 	return result.Error
 }

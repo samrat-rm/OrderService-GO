@@ -22,10 +22,10 @@ func GetAllProducts() ([]product.Product, error) {
 	return product.GetAllProducts()
 }
 
-func GetProduct(id int32) (*product.Product, error) {
+func GetProduct(id string) (*product.Product, error) {
 	return product.GetProduct(id)
 }
 
-func DeleteProduct(id int32) error {
+func DeleteProduct(id string) error {
 	return product.DeleteProduct(id)
 }
