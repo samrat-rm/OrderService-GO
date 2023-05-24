@@ -2,14 +2,19 @@ package main
 
 import (
 	"log"
+	"net"
 	"net/http"
 
 	"github.com/samrat-rm/OrderService-GO.git/client"
 )
 
 func main() {
+	lis, err := net.Listen("tcp", ":8091")
+	if err != nil {
+		log.Fatalf("Faile to start the server %v", err.Error())
+	}
 	client.InitProductServiceClient()
 	router := client.NewRouter()
 	log.Fatal(http.ListenAndServe(":8090", router))
-	log.Println("Server satrted at ")
+	log.Printf("Server satrted at %v", lis.Addr())
 }

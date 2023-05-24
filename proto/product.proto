@@ -29,10 +29,9 @@ message NoParam {}
 
 service ProductService {
     rpc CreateProduct(Product) returns (CreateProductResponse) {}
-    rpc GetProduct(ProductIdRequest) returns (CreateProductResponse) {}
+    rpc GetProduct(ProductIdRequest) returns (Product) {}
     rpc GetProducts(NoParam) returns (ProductList){}
     rpc DeleteProduct(ProductIdRequest) returns (ProductIdRequest) {}
-   
 }
 
 

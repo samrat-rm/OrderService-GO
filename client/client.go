@@ -24,7 +24,7 @@ func InitProductServiceClient() pb.ProductServiceClient {
 		log.Fatalf("Failed to connect to server %v", err.Error())
 	}
 
-	defer conn.Close()
+	// defer conn.Close()
 
 	return pb.NewProductServiceClient(conn)
 }
