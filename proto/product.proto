@@ -17,11 +17,22 @@ message Product {
 message ProductList {
     repeated Product products = 1;
 }
+message CreateProductResponse {
+    int32 id = 1;
+}
+
+message ProductIdRequest {
+    int32 id = 1;
+}
 
 message NoParam {}
 
 service ProductService {
-    rpc getProducts(NoParam) returns (ProductList){};
+    rpc CreateProduct(Product) returns (CreateProductResponse) {}
+    rpc GetProduct(ProductIdRequest) returns (CreateProductResponse) {}
+    rpc GetProducts(NoParam) returns (ProductList){}
+    rpc DeleteProduct(ProductIdRequest) returns (ProductIdRequest) {}
+   
 }
 
 
