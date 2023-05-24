@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strings"
 
@@ -19,12 +20,20 @@ func GetAllProducts(respWriter http.ResponseWriter, req *http.Request) {
 
 	products, err := ProductServiceClient.GetProducts(req.Context(), &proto.NoParam{})
 
-	if err != nil {
-		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: strings.Replace(err.Error(), "rpc error: code = Unknown desc = ", "", 1)}
-		respWriter.WriteHeader(errMessage.Status)
-		json.NewEncoder(respWriter).Encode(errMessage)
-		return
-	}
+	log.Fatalln(err)
+	log.Fatalln("------------")
+	// type Error struct {
+	// 	ErrString string
+	// }
+	// var nilerror *Error = nil
+
+	// if err != nilerror {
+
+	// 	errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: strings.Replace(err.Error(), "rpc error: code = Unknown desc = ", "", 1)}
+	// 	respWriter.WriteHeader(errMessage.Status)
+	// 	json.NewEncoder(respWriter).Encode(errMessage)
+	// 	return
+	// }
 
 	for _, productItr := range products.Products {
 		res = append(res, product.ProductDTO{

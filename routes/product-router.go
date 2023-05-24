@@ -10,5 +10,4 @@ func RegisterProductRoutes(router *mux.Router) {
 	router.HandleFunc("/products", handlers.CreateProduct).Methods("POST")
 	router.HandleFunc("/products/{id}", handlers.GetProduct).Methods("GET")
 	router.HandleFunc("/products/{id}", handlers.DeleteProduct).Methods("DELETE")
-
 }
