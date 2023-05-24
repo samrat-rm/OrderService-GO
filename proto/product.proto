@@ -11,6 +11,7 @@ message Product {
     float quantity = 4;
     string description = 5;
     bool available = 6;
+    int32 price = 7;
 }
 
 message ProductList {

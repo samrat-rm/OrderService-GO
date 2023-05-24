@@ -1,4 +1,4 @@
-package product
+package client
 
 import (
 	"log"
@@ -13,7 +13,11 @@ const (
 	port = ":8082"
 )
 
-func main() {
+type ProductServiceClient struct {
+	Client pb.ProductServiceClient
+}
+
+func InitProductServiceClient() pb.ProductServiceClient {
 	conn, err := grpc.Dial("localhost"+port, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
@@ -22,7 +26,5 @@ func main() {
 
 	defer conn.Close()
 
-	client := pb.NewProductServiceClient(conn)
-
-	CallGetProducts(client)
+	return pb.NewProductServiceClient(conn)
 }
