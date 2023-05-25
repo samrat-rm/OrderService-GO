@@ -9,8 +9,10 @@ import (
 )
 
 func (s *ProductServiceServer) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductResponse, error) {
-	product, _ := client.CreateProduct(req.Product.ProductId, req.Product.Name, req.Product.Description, req.Product.Price, req.Product.Quantity, req.Product.Unit, req.Product.Available)
-
+	product, err := client.CreateProduct(req.Product.ProductId, req.Product.Name, req.Product.Description, req.Product.Price, req.Product.Quantity, req.Product.Unit, req.Product.Available)
+	if err != nil {
+		return nil, errors.New("failed to create product")
+	}
 	return &pb.CreateProductResponse{
 		ProductId: product.Product_id,
 	}, nil

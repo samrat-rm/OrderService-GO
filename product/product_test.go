@@ -1,63 +1,106 @@
 package product
 
-// import (
-// 	"testing"
+import (
+	"errors"
+	"testing"
 
-// 	"github.com/stretchr/testify/assert"
-// )
+	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
 
-// var newProduct = &Product{
-// 	Product_id:  "123",
-// 	Name:        "Test Product",
-// 	Description: "This is a test product",
-// 	Quantity:    10.5,
-// 	Unit:        "pcs",
-// 	Available:   true,
-// 	Price:       100,
-// }
+func setupMockDatabase(t *testing.T) (*gorm.DB, sqlmock.Sqlmock) {
+	db, mock, err := sqlmock.New()
+	assert.NoError(t, err)
 
-// func TestCreateProduct(t *testing.T) {
+	gormDB, err := gorm.Open(postgres.New(postgres.Config{
+		Conn: db,
+	}), &gorm.Config{})
+	assert.NoError(t, err)
 
-// 	InitialMigrationProduct()
+	return gormDB, mock
+}
 
-// 	createdProduct, err := CreateProduct(newProduct)
-// 	assert.NoError(t, err)
-// 	assert.NotNil(t, createdProduct)
-// 	assert.NotEmpty(t, createdProduct.ID)
-// }
+func closeMockDatabase(t *testing.T, db *gorm.DB) {
+	_ = db.Migrator().DropTable(&Product{})
+	sql, err := db.DB()
+	sql.Close()
 
-// func TestGetProduct(t *testing.T) {
+	assert.NoError(t, err)
+}
 
-// 	InitialMigrationProduct()
+type MockDBProduct struct {
+	mock.Mock
+}
 
-// 	createdProduct, err := CreateProduct(newProduct)
+// Methos mocked
+func (m *MockDBProduct) CreateProduct(newProduct *Product) (*Product, error) {
+	args := m.Called(newProduct)
+	result := args.Get(0)
+	if result == nil {
+		return nil, args.Error(1)
+	}
+	return result.(*Product), args.Error(1)
+}
 
-// 	assert.NoError(t, err)
-// 	assert.NotNil(t, createdProduct)
-// 	assert.Equal(t, createdProduct.Product_id, newProduct.Product_id)
-// 	assert.Equal(t, newProduct.Name, createdProduct.Name)
-// }
+func TestCreateProductShouldReturnProduct_id(t *testing.T) {
+	// Arrange
+	db, _ := setupMockDatabase(t)
+	defer closeMockDatabase(t, db)
 
-// func TestGetAllProducts(t *testing.T) {
+	mockDBProduct := new(MockDBProduct)
 
-// 	InitialMigrationProduct()
+	product := &Product{
+		Product_id:  "P001",
+		Name:        "Test Product",
+		Description: "This is a test product",
+		Quantity:    10,
+		Unit:        "pcs",
+		Available:   true,
+		Price:       9.99,
+	}
 
-// 	products, err := GetAllProducts()
-// 	assert.NoError(t, err)
-// 	assert.NotNil(t, products)
-// 	assert.NotEmpty(t, products)
-// }
+	mockDBProduct.On("CreateProduct", product).Return(product, nil)
 
-// func TestDeleteProduct(t *testing.T) {
+	// Act
+	createdProduct, err := mockDBProduct.CreateProduct(product)
 
-// 	InitialMigrationProduct()
+	// Assertions
+	assert.NoError(t, err)
+	assert.NotNil(t, createdProduct)
+	assert.Equal(t, product.Product_id, createdProduct.Product_id)
 
-// 	createdProduct, _ := CreateProduct(newProduct)
+	mockDBProduct.AssertExpectations(t)
+}
 
-// 	err := DeleteProduct(createdProduct.Product_id)
-// 	assert.NoError(t, err)
+func TestCreateProductShouldReturnError(t *testing.T) {
+	// Arrange
+	db, _ := setupMockDatabase(t)
+	defer closeMockDatabase(t, db)
 
-// 	deletedProduct, err := GetProduct(createdProduct.Product_id)
-// 	assert.Error(t, err)
-// 	assert.Nil(t, deletedProduct)
-// }
+	mockDBProduct := new(MockDBProduct)
+
+	product := &Product{
+		Name:        "Test Product",
+		Description: "This is a test product",
+		Quantity:    10,
+		Unit:        "pcs",
+		Available:   true,
+		Price:       9.99,
+	}
+
+	expectedError := errors.New("failed to create product")
+	mockDBProduct.On("CreateProduct", product).Return(nil, expectedError)
+
+	// Act
+	createdProduct, err := mockDBProduct.CreateProduct(product)
+
+	// Assertions
+	assert.Error(t, err)
+	assert.Nil(t, createdProduct)
+	assert.Equal(t, expectedError, err)
+
+	mockDBProduct.AssertExpectations(t)
+}

@@ -11,8 +11,12 @@ func CreateProduct(newProduct *Product) (*Product, error) {
 	if newProduct == nil {
 		return nil, errors.New("new product is invalid")
 	}
-	fmt.Printf("New Product: %+v\n", newProduct)
-
+	if newProduct.Product_id == "" ||
+		newProduct.Name == "" ||
+		newProduct.Description == "" ||
+		newProduct.Unit == "" {
+		return nil, errors.New("missing required fields in new product")
+	}
 	result := DBProduct.Create(&newProduct)
 	if result.Error != nil {
 		fmt.Println("Error creating product:", result.Error)
