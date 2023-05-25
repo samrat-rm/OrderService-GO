@@ -85,54 +85,15 @@ func (s *ProductServiceServer) ChangeAvailability(ctx context.Context, req *pb.C
 	return response, nil
 }
 
-// func (s *ProductServiceServer) GetProducts(ctx context.Context, req *pb.NoParam) (*pb.ProductList, error) {
-// 	products, err := client.GetAllProducts()
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func (s *ProductServiceServer) DeleteProduct(ctx context.Context, req *pb.DeleteProductRequest) (*pb.DeleteProductResponse, error) {
+	err := client.DeleteProduct(req.ProductId)
+	if err != nil {
+		return nil, err
+	}
 
-// 	var productList pb.ProductList
-// 	for _, p := range products {
-// 		productList.Products = append(productList.Products, &pb.Product{
-// 			ProductId:   p.Product_id,
-// 			Name:        p.Name,
-// 			Description: p.Description,
-// 			Price:       int32(p.Price),
-// 			Quantity:    p.Quantity,
-// 			Unit:        p.Unit,
-// 			Available:   p.Available,
-// 		})
-// 	}
+	response := &pb.DeleteProductResponse{
+		Success: true,
+	}
 
-// 	return &productList, nil
-// }
-
-// func (s *ProductServiceServer) GetProduct(ctx context.Context, req *pb.ProductIdRequest) (*pb.Product, error) {
-// 	productID := req.Id
-// 	product, err := client.GetProduct((productID))
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return &pb.Product{
-// 		ProductId:   product.Product_id,
-// 		Name:        product.Name,
-// 		Unit:        product.Unit,
-// 		Quantity:    product.Quantity,
-// 		Description: product.Description,
-// 		Available:   product.Available,
-// 		Price:       int32(product.Price),
-// 	}, nil
-// }
-
-// func (s *ProductServiceServer) DeleteProduct(ctx context.Context, req *pb.ProductIdRequest) (*pb.ProductIdRequest, error) {
-// 	productID := req.Id
-// 	err := client.DeleteProduct(productID)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return &pb.ProductIdRequest{
-// 		Id: productID,
-// 	}, nil
-// }
+	return response, nil
+}

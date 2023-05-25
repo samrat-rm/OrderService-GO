@@ -65,3 +65,16 @@ func SaveProductInDB(product *Product) error {
 	}
 	return nil
 }
+func DeleteProduct(productID string) error {
+	product, err := GetProductByID(productID)
+	if err != nil {
+		return err
+	}
+
+	result := DBProduct.Delete(&product)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}

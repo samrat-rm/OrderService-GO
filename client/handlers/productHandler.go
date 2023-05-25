@@ -150,117 +150,25 @@ func ChangeAvailability(respWriter http.ResponseWriter, req *http.Request) {
 	respWriter.WriteHeader(http.StatusOK)
 }
 
-// func GetAllProducts(respWriter http.ResponseWriter, req *http.Request) {
-// 	respWriter.Header().Set("Content-Type", "application/json")
+func DeleteProduct(respWriter http.ResponseWriter, req *http.Request) {
+	respWriter.Header().Set("Content-Type", "application/json")
 
-// 	// var res []product.ProductDTO
+	// Extract the product ID from the request URL or query parameter
+	productID := req.URL.Query().Get("product_id")
 
-// 	// ProductServiceClient := client.InitProductServiceClient()
+	ProductServiceClient := client.InitProductServiceClient()
 
-// 	// products, err := ProductServiceClient.GetProducts(req.Context(), &proto.NoParam{})
+	deleteReq := &proto.DeleteProductRequest{
+		ProductId: productID,
+	}
 
-// 	dummyResponse := []product.ProductDTO{
-// 		{
-// 			Product_id:  "1",
-// 			Name:        "Product 1",
-// 			Description: "Description 1",
-// 			Price:       10,
-// 			Quantity:    5,
-// 			Unit:        "pcs",
-// 			Available:   true,
-// 		},
-// 		{
-// 			Product_id:  "2",
-// 			Name:        "Product 2",
-// 			Description: "Description 2",
-// 			Price:       20,
-// 			Quantity:    3,
-// 			Unit:        "pcs",
-// 			Available:   false,
-// 		},
-// 	}
+	_, err := ProductServiceClient.DeleteProduct(req.Context(), deleteReq)
+	if err != nil {
+		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: strings.Replace(err.Error(), "rpc error: code = Unknown desc = ", "", 1)}
+		respWriter.WriteHeader(errMessage.Status)
+		json.NewEncoder(respWriter).Encode(errMessage)
+		return
+	}
+	respWriter.WriteHeader(http.StatusOK)
 
-// 	// log.Fatalln(err)
-// 	log.Fatalln("----------------------------------------")
-// 	// type Error struct {
-// 	// 	ErrString string
-// 	// }
-// 	// var nilerror *Error = nil
-
-// 	// if err != nilerror {
-
-// 	// 	errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: strings.Replace(err.Error(), "rpc error: code = Unknown desc = ", "", 1)}
-// 	// 	respWriter.WriteHeader(errMessage.Status)
-// 	// 	json.NewEncoder(respWriter).Encode(errMessage)
-// 	// 	return
-// 	// }
-
-// 	// for _, productItr := range products.Products {
-// 	// 	res = append(res, product.ProductDTO{
-// 	// 		Product_id:  productItr.ProductId,
-// 	// 		Name:        productItr.Name,
-// 	// 		Description: productItr.Description,
-// 	// 		Price:       productItr.Price,
-// 	// 		Quantity:    productItr.Quantity,
-// 	// 		Unit:        productItr.Unit,
-// 	// 		Available:   productItr.Available,
-// 	// 	})
-// 	// }
-
-// 	respWriter.WriteHeader(http.StatusOK)
-// 	json.NewEncoder(respWriter).Encode(dummyResponse)
-// }
-
-// func GetProduct(respWriter http.ResponseWriter, req *http.Request) {
-// 	respWriter.Header().Set("Content-Type", "application/json")
-
-// 	ProductServiceClient := client.InitProductServiceClient()
-
-// 	productID := req.URL.Query().Get("product_id")
-// 	if productID == "" {
-// 		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: "Missing product ID"}
-// 		respWriter.WriteHeader(errMessage.Status)
-// 		json.NewEncoder(respWriter).Encode(errMessage)
-// 		return
-// 	}
-
-// 	productResponse, err := ProductServiceClient.GetProduct(req.Context(), &proto.ProductIdRequest{
-// 		Id: productID,
-// 	})
-// 	if err != nil {
-// 		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: strings.Replace(err.Error(), "rpc error: code = Unknown desc = ", "", 1)}
-// 		respWriter.WriteHeader(errMessage.Status)
-// 		json.NewEncoder(respWriter).Encode(errMessage)
-// 		return
-// 	}
-
-// 	respWriter.WriteHeader(http.StatusOK)
-// 	json.NewEncoder(respWriter).Encode(productResponse)
-// // }
-
-// func DeleteProduct(respWriter http.ResponseWriter, req *http.Request) {
-// 	respWriter.Header().Set("Content-Type", "application/json")
-
-// 	ProductServiceClient := client.InitProductServiceClient()
-
-// 	productID := req.URL.Query().Get("product_id")
-// 	if productID == "" {
-// 		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: "Missing product ID"}
-// 		respWriter.WriteHeader(errMessage.Status)
-// 		json.NewEncoder(respWriter).Encode(errMessage)
-// 		return
-// 	}
-
-// 	_, err := ProductServiceClient.DeleteProduct(req.Context(), &proto.ProductIdRequest{
-// 		Id: productID,
-// 	})
-// 	if err != nil {
-// 		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: strings.Replace(err.Error(), "rpc error: code = Unknown desc = ", "", 1)}
-// 		respWriter.WriteHeader(errMessage.Status)
-// 		json.NewEncoder(respWriter).Encode(errMessage)
-// 		return
-// 	}
-
-// 	respWriter.WriteHeader(http.StatusOK)
-// 	json.NewEncoder(respWriter).Encode(productID)
-// }
+}
