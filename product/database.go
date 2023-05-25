@@ -7,7 +7,6 @@ import (
 
 	"fmt"
 
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
