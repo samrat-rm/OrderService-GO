@@ -44,6 +44,14 @@ func (m *MockDBProduct) CreateProduct(newProduct *Product) (*Product, error) {
 	}
 	return result.(*Product), args.Error(1)
 }
+func (m *MockDBProduct) GetProducts() ([]*Product, error) {
+	args := m.Called()
+	result := args.Get(0)
+	if result == nil {
+		return nil, args.Error(1)
+	}
+	return result.([]*Product), args.Error(1)
+}
 
 func TestCreateProductShouldReturnProduct_id(t *testing.T) {
 	// Arrange
@@ -101,6 +109,46 @@ func TestCreateProductShouldReturnError(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, createdProduct)
 	assert.Equal(t, expectedError, err)
+
+	mockDBProduct.AssertExpectations(t)
+}
+func TestGetProductsShouldReturnProducts(t *testing.T) {
+	// Arrange
+	db, _ := setupMockDatabase(t)
+	defer closeMockDatabase(t, db)
+
+	mockDBProduct := new(MockDBProduct)
+
+	products := []*Product{
+		{
+			Product_id:  "P001",
+			Name:        "Product 1",
+			Description: "Description 1",
+			Quantity:    10,
+			Unit:        "pcs",
+			Available:   true,
+			Price:       9.99,
+		},
+		{
+			Product_id:  "P002",
+			Name:        "Product 2",
+			Description: "Description 2",
+			Quantity:    5,
+			Unit:        "pcs",
+			Available:   true,
+			Price:       14.99,
+		},
+	}
+
+	mockDBProduct.On("GetProducts").Return(products, nil)
+
+	// Act
+	result, err := mockDBProduct.GetProducts()
+
+	// Assertions
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.Equal(t, products, result)
 
 	mockDBProduct.AssertExpectations(t)
 }
