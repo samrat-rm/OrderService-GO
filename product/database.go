@@ -3,31 +3,80 @@ package product
 import (
 	"log"
 
-	"gorm.io/driver/mysql"
+	"errors"
+
+	"fmt"
+
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var DBProduct *gorm.DB
 var errProduct error
 
-const ProductDNS = "root:@tcp(localhost:3306)/quickmart?charset=utf8mb4&parseTime=True&loc=Local"
-
-func InitialMigrationProduct() {
-	DBProduct, errProduct = gorm.Open(mysql.Open(ProductDNS), &gorm.Config{})
-	if errProduct != nil {
-		log.Fatal(errProduct.Error())
-		panic("Cannot connect to DB")
-	}
-	DBProduct.AutoMigrate(&Product{}) // creates table if no there
-}
+//
 
 type Product struct {
 	gorm.Model
 	Product_id  string  `json:"product_id"`
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
-	Quantity    float32 `json:"quantity"`
+	Quantity    int32   `json:"quantity"`
 	Unit        string  `json:"unit"`
 	Available   bool    `json:"available"`
-	Price       int32   `json:"price"`
+	Price       float32 `json:"price"`
+}
+
+func InitialMigrationProduct(dbInstance *gorm.DB) {
+	DBProduct = dbInstance
+	DBProduct.AutoMigrate(&Product{})
+}
+func initModels() {
+	log.Printf("Initializing models")
+	InitialMigrationProduct(DBProduct)
+}
+func InitDB() error {
+	ProductDNS := fmt.Sprintf("host=localhost port=5434 user=%s password=%s dbname=%s sslmode=disable", "samrat.m_ftc", "sam007s@M", "samrat.m_ftc")
+	DBProduct, errProduct = gorm.Open(postgres.Open(ProductDNS), &gorm.Config{})
+	if errProduct != nil {
+		log.Println("Failed to connect to MySQL:", errProduct.Error())
+		return errProduct
+	}
+	initModels()
+	log.Println("Connected to the database!")
+	return nil
+}
+
+func CreateProduct(newProduct *Product) (*Product, error) {
+	if newProduct == nil {
+		return nil, errors.New("new product is invalid")
+	}
+
+	fmt.Printf("New Product: %+v\n", newProduct)
+
+	result := DBProduct.Create(&newProduct)
+	if result.Error != nil {
+		// Print the error details
+		fmt.Println("Error creating product:", result.Error)
+		return nil, result.Error
+	}
+
+	fmt.Println("Product created successfully")
+
+	return newProduct, nil
+}
+
+func CloseDB() error {
+	pSQL, err := DBProduct.DB()
+
+	if err != nil {
+		return errors.New("failed to close the database connection")
+	}
+
+	pSQL.Close()
+
+	log.Printf("Database disconnected ")
+
+	return nil
 }

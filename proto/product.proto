@@ -1,38 +1,65 @@
 syntax = "proto3";
 
-package order_service_package ;
-
 option go_package = "./proto";
 
+package greet_service_package ;
+
+
 message Product {
-    string product_id = 1;
-    string name = 2;
-    string unit = 3;
-    float quantity = 4;
-    string description = 5;
-    bool available = 6;
-    int32 price = 7;
+    string Product_id = 1;
+    string Name = 2;
+    string Unit = 3;
+    int32 Quantity = 4;
+    string Description = 5;
+    bool Available = 6;
+    float Price = 7;
 }
 
-message ProductList {
-    repeated Product products = 1;
+message CreateProductRequest {
+    Product Product = 1;
 }
+
 message CreateProductResponse {
-    string id = 1;
+    string Product_id = 1;
 }
 
-message ProductIdRequest {
-    string id = 1;
+message GetProductRequest {
+    string Product_id = 1;
 }
 
-message NoParam {}
+message GetProductResponse {
+    Product Product = 1;
+}
+
+message ChangeAvailabilityRequest {
+    string Product_id = 1;
+    bool Available = 2;
+}
+
+
+message ChangeAvailabilityResponse {
+    Product Product = 1;
+}
+
+message GetAllProductsRequest {}
+
+message GetAllProductsResponse {
+    repeated Product Products = 1;
+}
+
+message DeleteProductRequest {
+    string Product_id = 1;
+}
+
+message DeleteProductResponse {
+    bool Success = 1;
+}
 
 service ProductService {
-    rpc CreateProduct(Product) returns (CreateProductResponse) {}
-    rpc GetProduct(ProductIdRequest) returns (Product) {}
-    rpc GetProducts(NoParam) returns (ProductList){}
-    rpc DeleteProduct(ProductIdRequest) returns (ProductIdRequest) {}
+    rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse) {}
+    rpc GetProduct(GetProductRequest) returns (GetProductResponse) {}
+    rpc ChangeAvailability(ChangeAvailabilityRequest) returns (ChangeAvailabilityResponse) {}
+    rpc GetAllProducts(GetAllProductsRequest) returns (GetAllProductsResponse) {}
+    rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse) {}
 }
-
-
 

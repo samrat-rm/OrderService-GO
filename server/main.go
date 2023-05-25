@@ -4,6 +4,8 @@ import (
 	"log"
 	"net"
 
+	"github.com/samrat-rm/OrderService-GO.git/product"
+
 	pb "github.com/samrat-rm/OrderService-GO.git/proto"
 	"google.golang.org/grpc"
 )
@@ -17,6 +19,13 @@ type ProductServiceServer struct {
 }
 
 func main() {
+
+	err := product.InitDB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer product.CloseDB()
+
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("Faile to start the server %v", err.Error())
