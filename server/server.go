@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 
 	"github.com/samrat-rm/OrderService-GO.git/client"
 	pb "github.com/samrat-rm/OrderService-GO.git/proto"
@@ -48,6 +49,10 @@ func (s *ProductServiceServer) GetProduct(ctx context.Context, req *pb.GetProduc
 		return nil, err
 	}
 
+	if product == nil {
+		return nil, errors.New("product not found")
+	}
+
 	response := &pb.GetProductResponse{
 		Product: &pb.Product{
 			ProductId:   product.Product_id,
@@ -62,6 +67,7 @@ func (s *ProductServiceServer) GetProduct(ctx context.Context, req *pb.GetProduc
 
 	return response, nil
 }
+
 func (s *ProductServiceServer) ChangeAvailability(ctx context.Context, req *pb.ChangeAvailabilityRequest) (*pb.ChangeAvailabilityResponse, error) {
 	updatedProduct, err := client.UpdateAvailability(req.ProductId, req.Available)
 	if err != nil {

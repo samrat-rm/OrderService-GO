@@ -81,7 +81,6 @@ func GetAllProducts(respWriter http.ResponseWriter, req *http.Request) {
 	respWriter.WriteHeader(http.StatusOK)
 	json.NewEncoder(respWriter).Encode(products)
 }
-
 func GetProduct(respWriter http.ResponseWriter, req *http.Request) {
 	respWriter.Header().Set("Content-Type", "application/json")
 
@@ -90,6 +89,13 @@ func GetProduct(respWriter http.ResponseWriter, req *http.Request) {
 	// Extract the product ID from the request URL or body
 	productID := req.URL.Query().Get("product_id")
 
+	if productID == "" {
+		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: "Missing product ID"}
+		respWriter.WriteHeader(errMessage.Status)
+		json.NewEncoder(respWriter).Encode(errMessage)
+		return
+	}
+
 	getReq := &proto.GetProductRequest{
 		ProductId: productID,
 	}
@@ -97,6 +103,13 @@ func GetProduct(respWriter http.ResponseWriter, req *http.Request) {
 	productResponse, err := ProductServiceClient.GetProduct(req.Context(), getReq)
 	if err != nil {
 		errMessage := product.ErrorDTO{Status: http.StatusInternalServerError, Message: err.Error()}
+		respWriter.WriteHeader(errMessage.Status)
+		json.NewEncoder(respWriter).Encode(errMessage)
+		return
+	}
+
+	if productResponse.Product == nil {
+		errMessage := product.ErrorDTO{Status: http.StatusNotFound, Message: "Product not found"}
 		respWriter.WriteHeader(errMessage.Status)
 		json.NewEncoder(respWriter).Encode(errMessage)
 		return
@@ -116,6 +129,7 @@ func GetProduct(respWriter http.ResponseWriter, req *http.Request) {
 	respWriter.WriteHeader(http.StatusOK)
 	json.NewEncoder(respWriter).Encode(product)
 }
+
 func ChangeAvailability(respWriter http.ResponseWriter, req *http.Request) {
 	respWriter.Header().Set("Content-Type", "application/json")
 
