@@ -40,6 +40,19 @@ func (m *MockDBProduct) GetProductByID(id string) (*product.Product, error) {
 	return result.(*product.Product), args.Error(1)
 }
 
+func (m *MockDBProduct) SaveProductInDB(p *product.Product) error {
+	args := m.Called(p)
+	return args.Error(0)
+}
+func (m *MockDBProduct) UpdateAvailability(productID string, available bool) (*product.Product, error) {
+	args := m.Called(productID, available)
+	result := args.Get(0)
+	if result == nil {
+		return nil, args.Error(1)
+	}
+	return result.(*product.Product), args.Error(1)
+}
+
 func TestCreateProduct_Success(t *testing.T) {
 	// Arrange
 	mockDBProduct := new(MockDBProduct)
@@ -184,6 +197,54 @@ func TestGetProduct_NotFound(t *testing.T) {
 	// Assert
 	assert.Error(t, err)
 	assert.Nil(t, retrievedProduct)
+	assert.EqualError(t, err, "product not found")
+
+	mockDBProduct.AssertExpectations(t)
+}
+func TestUpdateAvailability_Success(t *testing.T) {
+	// Arrange
+	mockDBProduct := new(MockDBProduct)
+
+	productID := "P001"
+	available := true
+
+	expectedProduct := &product.Product{
+		Product_id:  productID,
+		Name:        "Test Product",
+		Description: "This is a test product",
+		Quantity:    10,
+		Unit:        "pcs",
+		Available:   available,
+		Price:       9.99,
+	}
+
+	mockDBProduct.On("UpdateAvailability", productID, available).Return(expectedProduct, nil) // Mocking the UpdateAvailability method
+
+	// Act
+	updatedProduct, err := mockDBProduct.UpdateAvailability(productID, available)
+
+	// Assert
+	assert.NoError(t, err)
+	assert.Equal(t, expectedProduct, updatedProduct)
+	assert.Equal(t, available, updatedProduct.Available)
+
+	mockDBProduct.AssertExpectations(t)
+}
+func TestUpdateAvailability_ProductNotFound(t *testing.T) {
+	// Arrange
+	mockDBProduct := new(MockDBProduct)
+
+	productID := "P001"
+	available := true
+
+	mockDBProduct.On("UpdateAvailability", productID, available).Return(nil, errors.New("product not found"))
+
+	// Act
+	updatedProduct, err := mockDBProduct.UpdateAvailability(productID, available)
+
+	// Assert
+	assert.Error(t, err)
+	assert.Nil(t, updatedProduct)
 	assert.EqualError(t, err, "product not found")
 
 	mockDBProduct.AssertExpectations(t)
