@@ -48,14 +48,10 @@ func InitDB() error {
 
 func CloseDB() error {
 	pSQL, err := DBProduct.DB()
-
 	if err != nil {
 		return errors.New("failed to close the database connection")
 	}
-
 	pSQL.Close()
-
 	log.Printf("Database disconnected ")
-
 	return nil
 }

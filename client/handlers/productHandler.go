@@ -82,6 +82,41 @@ func GetAllProducts(respWriter http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(respWriter).Encode(products)
 }
 
+func GetProduct(respWriter http.ResponseWriter, req *http.Request) {
+	respWriter.Header().Set("Content-Type", "application/json")
+
+	ProductServiceClient := client.InitProductServiceClient()
+
+	// Extract the product ID from the request URL or body
+	productID := req.URL.Query().Get("product_id") // Example: "/product?id=12345"
+
+	getReq := &proto.GetProductRequest{
+		ProductId: productID,
+	}
+
+	productResponse, err := ProductServiceClient.GetProduct(req.Context(), getReq)
+	if err != nil {
+		errMessage := product.ErrorDTO{Status: http.StatusInternalServerError, Message: err.Error()}
+		respWriter.WriteHeader(errMessage.Status)
+		json.NewEncoder(respWriter).Encode(errMessage)
+		return
+	}
+
+	pbProduct := productResponse.Product
+	product := &product.Product{
+		Product_id:  pbProduct.ProductId,
+		Name:        pbProduct.Name,
+		Description: pbProduct.Description,
+		Quantity:    pbProduct.Quantity,
+		Unit:        pbProduct.Unit,
+		Available:   pbProduct.Available,
+		Price:       pbProduct.Price,
+	}
+
+	respWriter.WriteHeader(http.StatusOK)
+	json.NewEncoder(respWriter).Encode(product)
+}
+
 // func GetAllProducts(respWriter http.ResponseWriter, req *http.Request) {
 // 	respWriter.Header().Set("Content-Type", "application/json")
 

@@ -42,6 +42,27 @@ func (s *ProductServiceServer) GetAllProducts(ctx context.Context, req *pb.GetAl
 	return response, nil
 }
 
+func (s *ProductServiceServer) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.GetProductResponse, error) {
+	product, err := client.GetProduct(req.ProductId)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &pb.GetProductResponse{
+		Product: &pb.Product{
+			ProductId:   product.Product_id,
+			Name:        product.Name,
+			Description: product.Description,
+			Quantity:    product.Quantity,
+			Unit:        product.Unit,
+			Available:   product.Available,
+			Price:       product.Price,
+		},
+	}
+
+	return response, nil
+}
+
 // func (s *ProductServiceServer) GetProducts(ctx context.Context, req *pb.NoParam) (*pb.ProductList, error) {
 // 	products, err := client.GetAllProducts()
 // 	if err != nil {

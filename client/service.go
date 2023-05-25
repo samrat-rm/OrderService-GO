@@ -22,9 +22,9 @@ func GetAllProducts() ([]*product.Product, error) {
 	return product.GetProducts()
 }
 
-// func GetProduct(id string) (*product.Product, error) {
-// 	return product.GetProduct(id)
-// }
+func GetProduct(id string) (*product.Product, error) {
+	return product.GetProductByID(id)
+}
 
 // func DeleteProduct(id string) error {
 // 	return product.DeleteProduct(id)
