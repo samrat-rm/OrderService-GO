@@ -53,6 +53,11 @@ func (m *MockDBProduct) UpdateAvailability(productID string, available bool) (*p
 	return result.(*product.Product), args.Error(1)
 }
 
+func (m *MockDBProduct) DeleteProduct(productID string) error {
+	args := m.Called(productID)
+	return args.Error(0)
+}
+
 func TestCreateProduct_Success(t *testing.T) {
 	// Arrange
 	mockDBProduct := new(MockDBProduct)
@@ -248,4 +253,36 @@ func TestUpdateAvailability_ProductNotFound(t *testing.T) {
 	assert.EqualError(t, err, "product not found")
 
 	mockDBProduct.AssertExpectations(t)
+}
+func TestDeleteProduct_Success(t *testing.T) {
+	// Arrange
+	mockProduct := new(MockDBProduct)
+	productID := "P001"
+
+	mockProduct.On("DeleteProduct", productID).Return(nil)
+
+	// Act
+	err := mockProduct.DeleteProduct(productID)
+
+	// Assert
+	assert.NoError(t, err)
+
+	mockProduct.AssertExpectations(t)
+}
+
+func TestDeleteProduct_Error(t *testing.T) {
+	// Arrange
+	mockProduct := new(MockDBProduct)
+	productID := "P001"
+	expectedError := errors.New("product not found")
+
+	mockProduct.On("DeleteProduct", productID).Return(expectedError)
+
+	// Act
+	err := mockProduct.DeleteProduct(productID)
+
+	// Assert
+	assert.EqualError(t, err, "product not found")
+
+	mockProduct.AssertExpectations(t)
 }
