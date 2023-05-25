@@ -60,6 +60,19 @@ func (m *MockDBProduct) GetProductByID(productID string) (*Product, error) {
 	}
 	return result.(*Product), args.Error(1)
 }
+func (m *MockDBProduct) UpdateAvailability(productID string, available bool) (*Product, error) {
+	args := m.Called(productID, available)
+	result := args.Get(0)
+	if result == nil {
+		return nil, args.Error(1)
+	}
+	return result.(*Product), args.Error(1)
+}
+
+func (m *MockDBProduct) Save(product *Product) error {
+	args := m.Called(product)
+	return args.Error(0)
+}
 
 func TestCreateProductShouldReturnProduct_id(t *testing.T) {
 	// Arrange
@@ -213,3 +226,56 @@ func TestGetProductByIDShouldReturnNotFoundError(t *testing.T) {
 
 	mockDBProduct.AssertExpectations(t)
 }
+
+func TestUpdateAvailability(t *testing.T) {
+	// Arrange
+	db, _ := setupMockDatabase(t)
+	defer closeMockDatabase(t, db)
+
+	mockDBProduct := new(MockDBProduct)
+
+	productID := "P001"
+	available := false
+
+	existingProduct := &Product{
+		Product_id:  productID,
+		Name:        "Test Product",
+		Description: "This is a test product",
+		Quantity:    10,
+		Unit:        "pcs",
+		Available:   true,
+		Price:       9.99,
+	}
+	mockDBProduct.On("GetProductByID", productID).Return(existingProduct, nil)
+
+	updatedProduct := &Product{
+		Product_id:  productID,
+		Name:        "Test Product",
+		Description: "This is a test product",
+		Quantity:    10,
+		Unit:        "pcs",
+		Available:   available,
+		Price:       9.99,
+	}
+	mockDBProduct.On("Save", updatedProduct).Return(nil)
+
+	mockDBProduct.On("UpdateAvailability", productID, available).Return(updatedProduct, nil)
+
+	// Act
+	updated, err := mockDBProduct.UpdateAvailability(productID, available)
+
+	// Assertions
+	assert.NoError(t, err)
+	assert.NotNil(t, updated)
+	assert.Equal(t, productID, updated.Product_id)
+	assert.Equal(t, available, updated.Available)
+
+}
+
+// func TestUpdateAvailability_ProductNotFound(t *testing.T) {
+
+// }
+
+// func TestUpdateAvailability_SaveError(t *testing.T) {
+
+// }

@@ -62,6 +62,7 @@ func UpdateAvailability(productID string, available bool) (*Product, error) {
 
 	return product, nil
 }
+
 func SaveProductInDB(product *Product) error {
 	result := DBProduct.Save(product)
 	if result.Error != nil {
