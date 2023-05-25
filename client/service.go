@@ -26,6 +26,19 @@ func GetProduct(id string) (*product.Product, error) {
 	return product.GetProductByID(id)
 }
 
-// func DeleteProduct(id string) error {
-// 	return product.DeleteProduct(id)
-// }
+func UpdateAvailability(productID string, available bool) (*product.Product, error) {
+	updatedProduct, err := product.GetProductByID(productID)
+	if err != nil {
+		return nil, err
+	}
+
+	updatedProduct.Available = available
+
+	// Update the product in the database
+	err = product.SaveProductInDB(updatedProduct)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedProduct, nil
+}

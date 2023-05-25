@@ -88,7 +88,7 @@ func GetProduct(respWriter http.ResponseWriter, req *http.Request) {
 	ProductServiceClient := client.InitProductServiceClient()
 
 	// Extract the product ID from the request URL or body
-	productID := req.URL.Query().Get("product_id") // Example: "/product?id=12345"
+	productID := req.URL.Query().Get("product_id")
 
 	getReq := &proto.GetProductRequest{
 		ProductId: productID,
@@ -115,6 +115,39 @@ func GetProduct(respWriter http.ResponseWriter, req *http.Request) {
 
 	respWriter.WriteHeader(http.StatusOK)
 	json.NewEncoder(respWriter).Encode(product)
+}
+func ChangeAvailability(respWriter http.ResponseWriter, req *http.Request) {
+	respWriter.Header().Set("Content-Type", "application/json")
+
+	// Extract the product ID from the request URL or query parameter
+	productID := req.URL.Query().Get("product_id")
+
+	var changeAvailabilityReq product.ChangeAvailabilityRequest
+	changeAvailabilityReq.ProductId = productID
+
+	if err := json.NewDecoder(req.Body).Decode(&changeAvailabilityReq); err != nil {
+		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: err.Error()}
+		respWriter.WriteHeader(errMessage.Status)
+		json.NewEncoder(respWriter).Encode(errMessage)
+		return
+	}
+
+	ProductServiceClient := client.InitProductServiceClient()
+
+	changeReq := &proto.ChangeAvailabilityRequest{
+		ProductId: changeAvailabilityReq.ProductId,
+		Available: changeAvailabilityReq.Available,
+	}
+
+	_, err := ProductServiceClient.ChangeAvailability(req.Context(), changeReq)
+	if err != nil {
+		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: strings.Replace(err.Error(), "rpc error: code = Unknown desc = ", "", 1)}
+		respWriter.WriteHeader(errMessage.Status)
+		json.NewEncoder(respWriter).Encode(errMessage)
+		return
+	}
+
+	respWriter.WriteHeader(http.StatusOK)
 }
 
 // func GetAllProducts(respWriter http.ResponseWriter, req *http.Request) {

@@ -42,3 +42,26 @@ func GetProductByID(productID string) (*Product, error) {
 	}
 	return product, nil
 }
+
+func UpdateAvailability(productID string, available bool) (*Product, error) {
+	product, err := GetProductByID(productID)
+	if err != nil {
+		return nil, err
+	}
+
+	product.Available = available
+
+	result := DBProduct.Save(&product)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return product, nil
+}
+func SaveProductInDB(product *Product) error {
+	result := DBProduct.Save(product)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}

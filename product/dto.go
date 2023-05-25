@@ -14,3 +14,8 @@ type ErrorDTO struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
 }
+
+type ChangeAvailabilityRequest struct {
+	ProductId string `json:"product_id"`
+	Available bool   `json:"available"`
+}

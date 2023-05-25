@@ -62,6 +62,28 @@ func (s *ProductServiceServer) GetProduct(ctx context.Context, req *pb.GetProduc
 
 	return response, nil
 }
+func (s *ProductServiceServer) ChangeAvailability(ctx context.Context, req *pb.ChangeAvailabilityRequest) (*pb.ChangeAvailabilityResponse, error) {
+	updatedProduct, err := client.UpdateAvailability(req.ProductId, req.Available)
+	if err != nil {
+		return nil, err
+	}
+
+	pbProduct := &pb.Product{
+		ProductId:   updatedProduct.Product_id,
+		Name:        updatedProduct.Name,
+		Description: updatedProduct.Description,
+		Quantity:    updatedProduct.Quantity,
+		Unit:        updatedProduct.Unit,
+		Available:   updatedProduct.Available,
+		Price:       updatedProduct.Price,
+	}
+
+	response := &pb.ChangeAvailabilityResponse{
+		Product: pbProduct,
+	}
+
+	return response, nil
+}
 
 // func (s *ProductServiceServer) GetProducts(ctx context.Context, req *pb.NoParam) (*pb.ProductList, error) {
 // 	products, err := client.GetAllProducts()
