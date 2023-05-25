@@ -52,6 +52,14 @@ func (m *MockDBProduct) GetProducts() ([]*Product, error) {
 	}
 	return result.([]*Product), args.Error(1)
 }
+func (m *MockDBProduct) GetProductByID(productID string) (*Product, error) {
+	args := m.Called(productID)
+	result := args.Get(0)
+	if result == nil {
+		return nil, args.Error(1)
+	}
+	return result.(*Product), args.Error(1)
+}
 
 func TestCreateProductShouldReturnProduct_id(t *testing.T) {
 	// Arrange
@@ -149,6 +157,59 @@ func TestGetProductsShouldReturnProducts(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 	assert.Equal(t, products, result)
+
+	mockDBProduct.AssertExpectations(t)
+}
+func TestGetProductByIDShouldReturnProduct(t *testing.T) {
+	// Arrange
+	db, _ := setupMockDatabase(t)
+	defer closeMockDatabase(t, db)
+
+	mockDBProduct := new(MockDBProduct)
+
+	productID := "P001"
+	expectedProduct := &Product{
+		Product_id:  productID,
+		Name:        "Test Product",
+		Description: "This is a test product",
+		Quantity:    10,
+		Unit:        "pcs",
+		Available:   true,
+		Price:       9.99,
+	}
+
+	mockDBProduct.On("GetProductByID", productID).Return(expectedProduct, nil)
+
+	// Act
+	result, err := mockDBProduct.GetProductByID(productID)
+
+	// Assertions
+	assert.NoError(t, err)
+	assert.NotNil(t, result)
+	assert.Equal(t, expectedProduct, result)
+
+	mockDBProduct.AssertExpectations(t)
+}
+
+func TestGetProductByIDShouldReturnNotFoundError(t *testing.T) {
+	// Arrange
+	db, _ := setupMockDatabase(t)
+	defer closeMockDatabase(t, db)
+
+	mockDBProduct := new(MockDBProduct)
+
+	productID := "Invalid ID"
+	expectedError := errors.New("product not found")
+
+	mockDBProduct.On("GetProductByID", productID).Return(nil, expectedError)
+
+	// Act
+	result, err := mockDBProduct.GetProductByID(productID)
+
+	// Assertions
+	assert.Error(t, err)
+	assert.Nil(t, result)
+	assert.Equal(t, expectedError, err)
 
 	mockDBProduct.AssertExpectations(t)
 }
