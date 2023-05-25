@@ -18,9 +18,9 @@ func CreateProduct(product_id string, name string, description string, price flo
 	return product.CreateProduct(&newProduct)
 }
 
-// func GetAllProducts() ([]product.Product, error) {
-// 	return product.GetAllProducts()
-// }
+func GetAllProducts() ([]*product.Product, error) {
+	return product.GetProducts()
+}
 
 // func GetProduct(id string) (*product.Product, error) {
 // 	return product.GetProduct(id)

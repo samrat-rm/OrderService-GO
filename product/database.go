@@ -15,8 +15,6 @@ import (
 var DBProduct *gorm.DB
 var errProduct error
 
-//
-
 type Product struct {
 	gorm.Model
 	Product_id  string  `json:"product_id"`
@@ -46,25 +44,6 @@ func InitDB() error {
 	initModels()
 	log.Println("Connected to the database!")
 	return nil
-}
-
-func CreateProduct(newProduct *Product) (*Product, error) {
-	if newProduct == nil {
-		return nil, errors.New("new product is invalid")
-	}
-
-	fmt.Printf("New Product: %+v\n", newProduct)
-
-	result := DBProduct.Create(&newProduct)
-	if result.Error != nil {
-		// Print the error details
-		fmt.Println("Error creating product:", result.Error)
-		return nil, result.Error
-	}
-
-	fmt.Println("Product created successfully")
-
-	return newProduct, nil
 }
 
 func CloseDB() error {

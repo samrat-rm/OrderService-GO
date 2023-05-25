@@ -1,24 +1,34 @@
 package product
 
-// func GetAllProducts() ([]Product, error) {
-// 	var products []Product
-// 	result := DBProduct.Find(&products)
-// 	if result.Error != nil {
-// 		return nil, result.Error
-// 	}
-// 	return products, nil
-// }
+import (
+	"errors"
+	"fmt"
+)
 
-// func GetProduct(id int32) (*Product, error) {
-// 	var product Product
-// 	result := DBProduct.First(&product, id)
-// 	if result.Error != nil {
-// 		return nil, result.Error
-// 	}
-// 	return &product, nil
-// }
+func CreateProduct(newProduct *Product) (*Product, error) {
+	if newProduct == nil {
+		return nil, errors.New("new product is invalid")
+	}
 
-// func DeleteProduct(id int32) error {
-// 	result := DBProduct.Delete(&Product{}, id)
-// 	return result.Error
-// }
+	fmt.Printf("New Product: %+v\n", newProduct)
+
+	result := DBProduct.Create(&newProduct)
+	if result.Error != nil {
+		// Print the error details
+		fmt.Println("Error creating product:", result.Error)
+		return nil, result.Error
+	}
+
+	fmt.Println("Product created successfully")
+
+	return newProduct, nil
+}
+
+func GetProducts() ([]*Product, error) {
+	var products []*Product
+	result := DBProduct.Find(&products)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return products, nil
+}

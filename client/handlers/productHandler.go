@@ -50,6 +50,38 @@ func CreateProduct(respWriter http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(respWriter).Encode(createdProduct.ProductId)
 }
 
+func GetAllProducts(respWriter http.ResponseWriter, req *http.Request) {
+	respWriter.Header().Set("Content-Type", "application/json")
+
+	ProductServiceClient := client.InitProductServiceClient()
+
+	getAllReq := &proto.GetAllProductsRequest{}
+	productsResponse, err := ProductServiceClient.GetAllProducts(req.Context(), getAllReq)
+	if err != nil {
+		errMessage := product.ErrorDTO{Status: http.StatusInternalServerError, Message: err.Error()}
+		respWriter.WriteHeader(errMessage.Status)
+		json.NewEncoder(respWriter).Encode(errMessage)
+		return
+	}
+
+	var products []*product.Product
+	for _, pbProduct := range productsResponse.Products {
+		product := &product.Product{
+			Product_id:  pbProduct.ProductId,
+			Name:        pbProduct.Name,
+			Description: pbProduct.Description,
+			Quantity:    pbProduct.Quantity,
+			Unit:        pbProduct.Unit,
+			Available:   pbProduct.Available,
+			Price:       pbProduct.Price,
+		}
+		products = append(products, product)
+	}
+
+	respWriter.WriteHeader(http.StatusOK)
+	json.NewEncoder(respWriter).Encode(products)
+}
+
 // func GetAllProducts(respWriter http.ResponseWriter, req *http.Request) {
 // 	respWriter.Header().Set("Content-Type", "application/json")
 

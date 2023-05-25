@@ -8,12 +8,38 @@ import (
 )
 
 func (s *ProductServiceServer) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductResponse, error) {
-
 	product, _ := client.CreateProduct(req.Product.ProductId, req.Product.Name, req.Product.Description, req.Product.Price, req.Product.Quantity, req.Product.Unit, req.Product.Available)
 
 	return &pb.CreateProductResponse{
 		ProductId: product.Product_id,
 	}, nil
+}
+
+func (s *ProductServiceServer) GetAllProducts(ctx context.Context, req *pb.GetAllProductsRequest) (*pb.GetAllProductsResponse, error) {
+	products, err := client.GetAllProducts() // Update to use GetProducts instead of client.GetAllProducts()
+	if err != nil {
+		return nil, err
+	}
+
+	var pbProducts []*pb.Product
+	for _, product := range products {
+		pbProduct := &pb.Product{
+			ProductId:   product.Product_id, // Update field name to ProductId
+			Name:        product.Name,
+			Description: product.Description,
+			Quantity:    product.Quantity,
+			Unit:        product.Unit,
+			Available:   product.Available,
+			Price:       product.Price,
+		}
+		pbProducts = append(pbProducts, pbProduct)
+	}
+
+	response := &pb.GetAllProductsResponse{
+		Products: pbProducts,
+	}
+
+	return response, nil
 }
 
 // func (s *ProductServiceServer) GetProducts(ctx context.Context, req *pb.NoParam) (*pb.ProductList, error) {
