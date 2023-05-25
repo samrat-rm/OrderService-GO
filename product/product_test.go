@@ -73,6 +73,10 @@ func (m *MockDBProduct) Save(product *Product) error {
 	args := m.Called(product)
 	return args.Error(0)
 }
+func (m *MockDBProduct) DeleteProduct(productID string) error {
+	args := m.Called(productID)
+	return args.Error(0)
+}
 
 func TestCreateProductShouldReturnProduct_id(t *testing.T) {
 	// Arrange
@@ -277,5 +281,41 @@ func TestUpdateAvailability(t *testing.T) {
 // }
 
 // func TestUpdateAvailability_SaveError(t *testing.T) {
+
+// }
+
+func TestDeleteProduct_ProductFoundAndDeleted(t *testing.T) {
+	// Set up the test
+	db, _ := setupMockDatabase(t)
+	defer closeMockDatabase(t, db)
+
+	mockDBProduct := new(MockDBProduct)
+
+	productID := "P001"
+
+	// Mock the GetProductByID method
+	existingProduct := &Product{
+		Product_id:  productID,
+		Name:        "Test Product",
+		Description: "This is a test product",
+		Quantity:    10,
+		Unit:        "pcs",
+		Available:   true,
+		Price:       9.99,
+	}
+	mockDBProduct.On("GetProductByID", productID).Return(existingProduct, nil)
+
+	// Mock the DeleteProduct method
+	mockDBProduct.On("DeleteProduct", productID).Return(nil)
+
+	// Perform the delete operation
+	err := mockDBProduct.DeleteProduct(productID)
+
+	// Assertion
+	assert.NoError(t, err)
+
+}
+
+// func TestDeleteProduct_ProductNotFound(t *testing.T) {
 
 // }
