@@ -6,7 +6,7 @@ import (
 
 	"github.com/samrat-rm/OrderService-GO.git/orders/model"
 
-	// grpcHandlers "github.com/samrat-rm/OrderService-GO.git/order/grpc_handlers"
+	grpcHandlers "github.com/samrat-rm/OrderService-GO.git/orders/grpc_handlers"
 	pb "github.com/samrat-rm/OrderService-GO.git/orders/proto"
 	"google.golang.org/grpc"
 )
@@ -14,10 +14,6 @@ import (
 var (
 	port = ":8092"
 )
-
-type OrderServiceServer struct {
-	pb.OrderServiceServer
-}
 
 func main() {
 
@@ -32,7 +28,7 @@ func main() {
 		log.Fatalf("Faile to start the server %v", err.Error())
 	}
 	grpcServer := grpc.NewServer()
-	pb.RegisterOrderServiceServer(grpcServer, &OrderServiceServer{})
+	pb.RegisterOrderServiceServer(grpcServer, &grpcHandlers.OrderServiceServer{})
 	log.Printf("Server satrted at %v", lis.Addr())
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Failed to start %v", err.Error())

@@ -52,10 +52,10 @@ func GetProductAmount(productID string) (*float32, error) {
 	return &product.Price, nil
 }
 
-func CreateOrder(productID string, quantity int32, address string, phoneNumber string) (*float32, error) {
+func CreateOrder(productID string, quantity int32, address string, phoneNumber string) (model.OrderResponse, error) {
 	amount, err := GetProductAmount(productID)
 	if err != nil {
-		return nil, err
+		return model.OrderResponse{}, err
 	}
 
 	order := &model.Order{
@@ -68,9 +68,14 @@ func CreateOrder(productID string, quantity int32, address string, phoneNumber s
 
 	result := model.OrderDB.Create(order)
 	if result.Error != nil {
-		return nil, result.Error
+		return model.OrderResponse{}, result.Error
 	}
 
 	totalAmount := *amount * float32(quantity)
-	return &totalAmount, nil
+	response := model.OrderResponse{
+		TotalAmount: totalAmount,
+		OrderID:     order.OrderID,
+	}
+
+	return response, nil
 }

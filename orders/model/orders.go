@@ -6,9 +6,9 @@ import (
 
 type Order struct {
 	gorm.Model
-	ProductID   string
-	Quantity    int32
-	Address     string
-	PhoneNumber string
-	OrderID     string
+	ProductID   string `json:"product_id"`
+	Quantity    int32  `json:"quantity"`
+	Address     string `json:"address"`
+	PhoneNumber string `json:"phoneNumber"`
+	OrderID     string `json:"order_id"`
 }
