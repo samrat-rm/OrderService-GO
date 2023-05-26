@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/samrat-rm/OrderService-GO.git/product"
+	"github.com/samrat-rm/OrderService-GO.git/product/controller"
 	"github.com/samrat-rm/OrderService-GO.git/product/model"
 )
 
@@ -16,26 +16,26 @@ func CreateProduct(product_id string, name string, description string, price flo
 		Price:       price,
 	}
 
-	return product.CreateProduct(&newProduct)
+	return controller.CreateProduct(&newProduct)
 }
 
 func GetAllProducts() ([]*model.Product, error) {
-	return product.GetProducts()
+	return controller.GetProducts()
 }
 
 func GetProduct(id string) (*model.Product, error) {
-	return product.GetProductByID(id)
+	return controller.GetProductByID(id)
 }
 
 func UpdateAvailability(productID string, available bool) (*model.Product, error) {
-	updatedProduct, err := product.GetProductByID(productID)
+	updatedProduct, err := controller.GetProductByID(productID)
 	if err != nil {
 		return nil, err
 	}
 
 	updatedProduct.Available = available
 
-	err = product.SaveProductInDB(updatedProduct)
+	err = controller.SaveProductInDB(updatedProduct)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func UpdateAvailability(productID string, available bool) (*model.Product, error
 	return updatedProduct, nil
 }
 func DeleteProduct(productID string) error {
-	err := product.DeleteProduct(productID)
+	err := controller.DeleteProduct(productID)
 	if err != nil {
 		return err
 	}
