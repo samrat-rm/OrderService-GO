@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option go_package = "./proto";
 
-package greet_service_package ;
+package product_service_package ;
 
 
 message Product {
