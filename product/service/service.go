@@ -1,4 +1,4 @@
-package client
+package service
 
 import (
 	"github.com/samrat-rm/OrderService-GO.git/product/controller"

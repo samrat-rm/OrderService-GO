@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 
-	"github.com/samrat-rm/OrderService-GO.git/client"
 	pb "github.com/samrat-rm/OrderService-GO.git/product/proto"
+	"github.com/samrat-rm/OrderService-GO.git/product/service"
 )
 
 func (s *ProductServiceServer) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductResponse, error) {
-	product, err := client.CreateProduct(req.Product.ProductId, req.Product.Name, req.Product.Description, req.Product.Price, req.Product.Quantity, req.Product.Unit, req.Product.Available)
+	product, err := service.CreateProduct(req.Product.ProductId, req.Product.Name, req.Product.Description, req.Product.Price, req.Product.Quantity, req.Product.Unit, req.Product.Available)
 	if err != nil {
 		return nil, errors.New("failed to create product")
 	}
@@ -19,7 +19,7 @@ func (s *ProductServiceServer) CreateProduct(ctx context.Context, req *pb.Create
 }
 
 func (s *ProductServiceServer) GetAllProducts(ctx context.Context, req *pb.GetAllProductsRequest) (*pb.GetAllProductsResponse, error) {
-	products, err := client.GetAllProducts() // Update to use GetProducts instead of client.GetAllProducts()
+	products, err := service.GetAllProducts() // Update to use GetProducts instead of service.GetAllProducts()
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (s *ProductServiceServer) GetAllProducts(ctx context.Context, req *pb.GetAl
 }
 
 func (s *ProductServiceServer) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.GetProductResponse, error) {
-	product, err := client.GetProduct(req.ProductId)
+	product, err := service.GetProduct(req.ProductId)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (s *ProductServiceServer) GetProduct(ctx context.Context, req *pb.GetProduc
 }
 
 func (s *ProductServiceServer) ChangeAvailability(ctx context.Context, req *pb.ChangeAvailabilityRequest) (*pb.ChangeAvailabilityResponse, error) {
-	updatedProduct, err := client.UpdateAvailability(req.ProductId, req.Available)
+	updatedProduct, err := service.UpdateAvailability(req.ProductId, req.Available)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func (s *ProductServiceServer) ChangeAvailability(ctx context.Context, req *pb.C
 }
 
 func (s *ProductServiceServer) DeleteProduct(ctx context.Context, req *pb.DeleteProductRequest) (*pb.DeleteProductResponse, error) {
-	err := client.DeleteProduct(req.ProductId)
+	err := service.DeleteProduct(req.ProductId)
 	if err != nil {
 		return nil, err
 	}
