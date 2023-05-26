@@ -6,7 +6,7 @@ import (
 
 	"github.com/samrat-rm/OrderService-GO.git/product/model"
 
-	pb "github.com/samrat-rm/OrderService-GO.git/proto"
+	pb "github.com/samrat-rm/OrderService-GO.git/product/proto"
 	"google.golang.org/grpc"
 )
 

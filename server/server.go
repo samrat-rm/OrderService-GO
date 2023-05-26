@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/samrat-rm/OrderService-GO.git/client"
-	pb "github.com/samrat-rm/OrderService-GO.git/proto"
+	pb "github.com/samrat-rm/OrderService-GO.git/product/proto"
 )
 
 func (s *ProductServiceServer) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductResponse, error) {

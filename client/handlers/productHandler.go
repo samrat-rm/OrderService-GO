@@ -7,7 +7,7 @@ import (
 
 	"github.com/samrat-rm/OrderService-GO.git/client"
 	"github.com/samrat-rm/OrderService-GO.git/product/model"
-	"github.com/samrat-rm/OrderService-GO.git/proto"
+	"github.com/samrat-rm/OrderService-GO.git/product/proto"
 )
 
 func CreateProduct(respWriter http.ResponseWriter, req *http.Request) {
