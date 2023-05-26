@@ -4,10 +4,12 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/samrat-rm/OrderService-GO.git/product/model"
+
 	"gorm.io/gorm"
 )
 
-func CreateProduct(newProduct *Product) (*Product, error) {
+func CreateProduct(newProduct *model.Product) (*model.Product, error) {
 	if newProduct == nil {
 		return nil, errors.New("new product is invalid")
 	}
@@ -17,7 +19,7 @@ func CreateProduct(newProduct *Product) (*Product, error) {
 		newProduct.Unit == "" {
 		return nil, errors.New("missing required fields in new product")
 	}
-	result := DBProduct.Create(&newProduct)
+	result := model.DBProduct.Create(&newProduct)
 	if result.Error != nil {
 		fmt.Println("Error creating product:", result.Error)
 		return nil, result.Error
@@ -26,18 +28,18 @@ func CreateProduct(newProduct *Product) (*Product, error) {
 	return newProduct, nil
 }
 
-func GetProducts() ([]*Product, error) {
-	var products []*Product
-	result := DBProduct.Find(&products)
+func GetProducts() ([]*model.Product, error) {
+	var products []*model.Product
+	result := model.DBProduct.Find(&products)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 	return products, nil
 }
 
-func GetProductByID(productID string) (*Product, error) {
-	product := &Product{}
-	result := DBProduct.First(product, "product_id = ?", productID)
+func GetProductByID(productID string) (*model.Product, error) {
+	product := &model.Product{}
+	result := model.DBProduct.First(product, "product_id = ?", productID)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, errors.New("product not found")
@@ -47,7 +49,7 @@ func GetProductByID(productID string) (*Product, error) {
 	return product, nil
 }
 
-func UpdateAvailability(productID string, available bool) (*Product, error) {
+func UpdateAvailability(productID string, available bool) (*model.Product, error) {
 	product, err := GetProductByID(productID)
 	if err != nil {
 		return nil, err
@@ -55,7 +57,7 @@ func UpdateAvailability(productID string, available bool) (*Product, error) {
 
 	product.Available = available
 
-	result := DBProduct.Save(&product)
+	result := model.DBProduct.Save(&product)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -63,8 +65,8 @@ func UpdateAvailability(productID string, available bool) (*Product, error) {
 	return product, nil
 }
 
-func SaveProductInDB(product *Product) error {
-	result := DBProduct.Save(product)
+func SaveProductInDB(product *model.Product) error {
+	result := model.DBProduct.Save(product)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -76,7 +78,7 @@ func DeleteProduct(productID string) error {
 		return err
 	}
 
-	result := DBProduct.Delete(&product)
+	result := model.DBProduct.Delete(&product)
 	if result.Error != nil {
 		return result.Error
 	}

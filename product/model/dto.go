@@ -1,4 +1,4 @@
-package product
+package model
 
 type ProductDTO struct {
 	Product_id  string  `json:"Product_id"`

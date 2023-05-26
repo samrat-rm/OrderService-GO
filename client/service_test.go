@@ -7,50 +7,50 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"github.com/samrat-rm/OrderService-GO.git/product"
+	"github.com/samrat-rm/OrderService-GO.git/product/model"
 )
 
 type MockDBProduct struct {
 	mock.Mock
 }
 
-func (m *MockDBProduct) CreateProduct(product_id string, name string, description string, price float32, quantity int32, unit string, available bool) (*product.Product, error) {
+func (m *MockDBProduct) CreateProduct(product_id string, name string, description string, price float32, quantity int32, unit string, available bool) (*model.Product, error) {
 	args := m.Called(product_id, name, description, price, quantity, unit, available)
 	result := args.Get(0)
 	if result == nil {
 		return nil, args.Error(1)
 	}
-	return result.(*product.Product), args.Error(1)
+	return result.(*model.Product), args.Error(1)
 }
-func (m *MockDBProduct) GetAllProducts() ([]*product.Product, error) {
+func (m *MockDBProduct) GetAllProducts() ([]*model.Product, error) {
 	args := m.Called()
 	result := args.Get(0)
 	if result == nil {
 		return nil, args.Error(1)
 	}
-	return result.([]*product.Product), args.Error(1)
+	return result.([]*model.Product), args.Error(1)
 }
 
-func (m *MockDBProduct) GetProductByID(id string) (*product.Product, error) {
+func (m *MockDBProduct) GetProductByID(id string) (*model.Product, error) {
 	args := m.Called(id)
 	result := args.Get(0)
 	if result == nil {
 		return nil, args.Error(1)
 	}
-	return result.(*product.Product), args.Error(1)
+	return result.(*model.Product), args.Error(1)
 }
 
-func (m *MockDBProduct) SaveProductInDB(p *product.Product) error {
+func (m *MockDBProduct) SaveProductInDB(p *model.Product) error {
 	args := m.Called(p)
 	return args.Error(0)
 }
-func (m *MockDBProduct) UpdateAvailability(productID string, available bool) (*product.Product, error) {
+func (m *MockDBProduct) UpdateAvailability(productID string, available bool) (*model.Product, error) {
 	args := m.Called(productID, available)
 	result := args.Get(0)
 	if result == nil {
 		return nil, args.Error(1)
 	}
-	return result.(*product.Product), args.Error(1)
+	return result.(*model.Product), args.Error(1)
 }
 
 func (m *MockDBProduct) DeleteProduct(productID string) error {
@@ -70,7 +70,7 @@ func TestCreateProduct_Success(t *testing.T) {
 	unit := "pcs"
 	available := true
 
-	expectedProduct := &product.Product{
+	expectedProduct := &model.Product{
 		Product_id:  productID,
 		Name:        name,
 		Description: description,
@@ -123,7 +123,7 @@ func TestGetAllProducts_Success(t *testing.T) {
 	// Arrange
 	mockDBProduct := new(MockDBProduct)
 
-	expectedProducts := []*product.Product{
+	expectedProducts := []*model.Product{
 		{Product_id: "P001", Name: "Product 1", Description: "Description 1", Quantity: 10},
 		{Product_id: "P002", Name: "Product 2", Description: "Description 2", Quantity: 5},
 	}
@@ -166,7 +166,7 @@ func TestGetProduct_Success(t *testing.T) {
 
 	productID := "P001"
 
-	expectedProduct := &product.Product{
+	expectedProduct := &model.Product{
 		Product_id:  productID,
 		Name:        "Test Product",
 		Description: "This is a test product",
@@ -213,7 +213,7 @@ func TestUpdateAvailability_Success(t *testing.T) {
 	productID := "P001"
 	available := true
 
-	expectedProduct := &product.Product{
+	expectedProduct := &model.Product{
 		Product_id:  productID,
 		Name:        "Test Product",
 		Description: "This is a test product",

@@ -2,10 +2,11 @@ package client
 
 import (
 	"github.com/samrat-rm/OrderService-GO.git/product"
+	"github.com/samrat-rm/OrderService-GO.git/product/model"
 )
 
-func CreateProduct(product_id string, name string, description string, price float32, quantity int32, unit string, available bool) (*product.Product, error) {
-	newProduct := product.Product{
+func CreateProduct(product_id string, name string, description string, price float32, quantity int32, unit string, available bool) (*model.Product, error) {
+	newProduct := model.Product{
 		Product_id:  product_id,
 		Name:        name,
 		Description: description,
@@ -18,15 +19,15 @@ func CreateProduct(product_id string, name string, description string, price flo
 	return product.CreateProduct(&newProduct)
 }
 
-func GetAllProducts() ([]*product.Product, error) {
+func GetAllProducts() ([]*model.Product, error) {
 	return product.GetProducts()
 }
 
-func GetProduct(id string) (*product.Product, error) {
+func GetProduct(id string) (*model.Product, error) {
 	return product.GetProductByID(id)
 }
 
-func UpdateAvailability(productID string, available bool) (*product.Product, error) {
+func UpdateAvailability(productID string, available bool) (*model.Product, error) {
 	updatedProduct, err := product.GetProductByID(productID)
 	if err != nil {
 		return nil, err

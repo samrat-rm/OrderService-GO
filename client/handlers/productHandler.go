@@ -6,17 +6,17 @@ import (
 	"strings"
 
 	"github.com/samrat-rm/OrderService-GO.git/client"
-	"github.com/samrat-rm/OrderService-GO.git/product"
+	"github.com/samrat-rm/OrderService-GO.git/product/model"
 	"github.com/samrat-rm/OrderService-GO.git/proto"
 )
 
 func CreateProduct(respWriter http.ResponseWriter, req *http.Request) {
 	respWriter.Header().Set("Content-Type", "application/json")
 
-	var newProduct product.ProductDTO
+	var newProduct model.ProductDTO
 
 	if err := json.NewDecoder(req.Body).Decode(&newProduct); err != nil {
-		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: err.Error()}
+		errMessage := model.ErrorDTO{Status: http.StatusBadRequest, Message: err.Error()}
 		respWriter.WriteHeader(errMessage.Status)
 		json.NewEncoder(respWriter).Encode(errMessage)
 		return
@@ -40,7 +40,7 @@ func CreateProduct(respWriter http.ResponseWriter, req *http.Request) {
 
 	if err != nil {
 
-		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: strings.Replace(err.Error(), "rpc error: code = Unknown desc = ", "", 1)}
+		errMessage := model.ErrorDTO{Status: http.StatusBadRequest, Message: strings.Replace(err.Error(), "rpc error: code = Unknown desc = ", "", 1)}
 		respWriter.WriteHeader(errMessage.Status)
 		json.NewEncoder(respWriter).Encode(errMessage)
 		return
@@ -58,15 +58,15 @@ func GetAllProducts(respWriter http.ResponseWriter, req *http.Request) {
 	getAllReq := &proto.GetAllProductsRequest{}
 	productsResponse, err := ProductServiceClient.GetAllProducts(req.Context(), getAllReq)
 	if err != nil {
-		errMessage := product.ErrorDTO{Status: http.StatusInternalServerError, Message: err.Error()}
+		errMessage := model.ErrorDTO{Status: http.StatusInternalServerError, Message: err.Error()}
 		respWriter.WriteHeader(errMessage.Status)
 		json.NewEncoder(respWriter).Encode(errMessage)
 		return
 	}
 
-	var products []*product.Product
+	var products []*model.Product
 	for _, pbProduct := range productsResponse.Products {
-		product := &product.Product{
+		product := &model.Product{
 			Product_id:  pbProduct.ProductId,
 			Name:        pbProduct.Name,
 			Description: pbProduct.Description,
@@ -90,7 +90,7 @@ func GetProduct(respWriter http.ResponseWriter, req *http.Request) {
 	productID := req.URL.Query().Get("product_id")
 
 	if productID == "" {
-		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: "Missing product ID"}
+		errMessage := model.ErrorDTO{Status: http.StatusBadRequest, Message: "Missing product ID"}
 		respWriter.WriteHeader(errMessage.Status)
 		json.NewEncoder(respWriter).Encode(errMessage)
 		return
@@ -102,21 +102,21 @@ func GetProduct(respWriter http.ResponseWriter, req *http.Request) {
 
 	productResponse, err := ProductServiceClient.GetProduct(req.Context(), getReq)
 	if err != nil {
-		errMessage := product.ErrorDTO{Status: http.StatusInternalServerError, Message: err.Error()}
+		errMessage := model.ErrorDTO{Status: http.StatusInternalServerError, Message: err.Error()}
 		respWriter.WriteHeader(errMessage.Status)
 		json.NewEncoder(respWriter).Encode(errMessage)
 		return
 	}
 
 	if productResponse.Product == nil {
-		errMessage := product.ErrorDTO{Status: http.StatusNotFound, Message: "Product not found"}
+		errMessage := model.ErrorDTO{Status: http.StatusNotFound, Message: "Product not found"}
 		respWriter.WriteHeader(errMessage.Status)
 		json.NewEncoder(respWriter).Encode(errMessage)
 		return
 	}
 
 	pbProduct := productResponse.Product
-	product := &product.Product{
+	product := &model.Product{
 		Product_id:  pbProduct.ProductId,
 		Name:        pbProduct.Name,
 		Description: pbProduct.Description,
@@ -136,11 +136,11 @@ func ChangeAvailability(respWriter http.ResponseWriter, req *http.Request) {
 	// Extract the product ID from the request URL or query parameter
 	productID := req.URL.Query().Get("product_id")
 
-	var changeAvailabilityReq product.ChangeAvailabilityRequest
+	var changeAvailabilityReq model.ChangeAvailabilityRequest
 	changeAvailabilityReq.ProductId = productID
 
 	if err := json.NewDecoder(req.Body).Decode(&changeAvailabilityReq); err != nil {
-		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: err.Error()}
+		errMessage := model.ErrorDTO{Status: http.StatusBadRequest, Message: err.Error()}
 		respWriter.WriteHeader(errMessage.Status)
 		json.NewEncoder(respWriter).Encode(errMessage)
 		return
@@ -155,7 +155,7 @@ func ChangeAvailability(respWriter http.ResponseWriter, req *http.Request) {
 
 	_, err := ProductServiceClient.ChangeAvailability(req.Context(), changeReq)
 	if err != nil {
-		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: strings.Replace(err.Error(), "rpc error: code = Unknown desc = ", "", 1)}
+		errMessage := model.ErrorDTO{Status: http.StatusBadRequest, Message: strings.Replace(err.Error(), "rpc error: code = Unknown desc = ", "", 1)}
 		respWriter.WriteHeader(errMessage.Status)
 		json.NewEncoder(respWriter).Encode(errMessage)
 		return
@@ -178,7 +178,7 @@ func DeleteProduct(respWriter http.ResponseWriter, req *http.Request) {
 
 	_, err := ProductServiceClient.DeleteProduct(req.Context(), deleteReq)
 	if err != nil {
-		errMessage := product.ErrorDTO{Status: http.StatusBadRequest, Message: strings.Replace(err.Error(), "rpc error: code = Unknown desc = ", "", 1)}
+		errMessage := model.ErrorDTO{Status: http.StatusBadRequest, Message: strings.Replace(err.Error(), "rpc error: code = Unknown desc = ", "", 1)}
 		respWriter.WriteHeader(errMessage.Status)
 		json.NewEncoder(respWriter).Encode(errMessage)
 		return

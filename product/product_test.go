@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/samrat-rm/OrderService-GO.git/product/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"gorm.io/driver/postgres"
@@ -24,7 +25,7 @@ func setupMockDatabase(t *testing.T) (*gorm.DB, sqlmock.Sqlmock) {
 }
 
 func closeMockDatabase(t *testing.T, db *gorm.DB) {
-	_ = db.Migrator().DropTable(&Product{})
+	_ = db.Migrator().DropTable(&model.Product{})
 	sql, err := db.DB()
 	sql.Close()
 
@@ -36,40 +37,40 @@ type MockDBProduct struct {
 }
 
 // Methos mocked
-func (m *MockDBProduct) CreateProduct(newProduct *Product) (*Product, error) {
+func (m *MockDBProduct) CreateProduct(newProduct *model.Product) (*model.Product, error) {
 	args := m.Called(newProduct)
 	result := args.Get(0)
 	if result == nil {
 		return nil, args.Error(1)
 	}
-	return result.(*Product), args.Error(1)
+	return result.(*model.Product), args.Error(1)
 }
-func (m *MockDBProduct) GetProducts() ([]*Product, error) {
+func (m *MockDBProduct) GetProducts() ([]*model.Product, error) {
 	args := m.Called()
 	result := args.Get(0)
 	if result == nil {
 		return nil, args.Error(1)
 	}
-	return result.([]*Product), args.Error(1)
+	return result.([]*model.Product), args.Error(1)
 }
-func (m *MockDBProduct) GetProductByID(productID string) (*Product, error) {
+func (m *MockDBProduct) GetProductByID(productID string) (*model.Product, error) {
 	args := m.Called(productID)
 	result := args.Get(0)
 	if result == nil {
 		return nil, args.Error(1)
 	}
-	return result.(*Product), args.Error(1)
+	return result.(*model.Product), args.Error(1)
 }
-func (m *MockDBProduct) UpdateAvailability(productID string, available bool) (*Product, error) {
+func (m *MockDBProduct) UpdateAvailability(productID string, available bool) (*model.Product, error) {
 	args := m.Called(productID, available)
 	result := args.Get(0)
 	if result == nil {
 		return nil, args.Error(1)
 	}
-	return result.(*Product), args.Error(1)
+	return result.(*model.Product), args.Error(1)
 }
 
-func (m *MockDBProduct) Save(product *Product) error {
+func (m *MockDBProduct) Save(product *model.Product) error {
 	args := m.Called(product)
 	return args.Error(0)
 }
@@ -85,7 +86,7 @@ func TestCreateProductShouldReturnProduct_id(t *testing.T) {
 
 	mockDBProduct := new(MockDBProduct)
 
-	product := &Product{
+	product := &model.Product{
 		Product_id:  "P001",
 		Name:        "Test Product",
 		Description: "This is a test product",
@@ -115,7 +116,7 @@ func TestCreateProductShouldReturnError(t *testing.T) {
 
 	mockDBProduct := new(MockDBProduct)
 
-	product := &Product{
+	product := &model.Product{
 		Name:        "Test Product",
 		Description: "This is a test product",
 		Quantity:    10,
@@ -144,7 +145,7 @@ func TestGetProductsShouldReturnProducts(t *testing.T) {
 
 	mockDBProduct := new(MockDBProduct)
 
-	products := []*Product{
+	products := []*model.Product{
 		{
 			Product_id:  "P001",
 			Name:        "Product 1",
@@ -185,7 +186,7 @@ func TestGetProductByIDShouldReturnProduct(t *testing.T) {
 	mockDBProduct := new(MockDBProduct)
 
 	productID := "P001"
-	expectedProduct := &Product{
+	expectedProduct := &model.Product{
 		Product_id:  productID,
 		Name:        "Test Product",
 		Description: "This is a test product",
@@ -241,7 +242,7 @@ func TestUpdateAvailability(t *testing.T) {
 	productID := "P001"
 	available := false
 
-	existingProduct := &Product{
+	existingProduct := &model.Product{
 		Product_id:  productID,
 		Name:        "Test Product",
 		Description: "This is a test product",
@@ -252,7 +253,7 @@ func TestUpdateAvailability(t *testing.T) {
 	}
 	mockDBProduct.On("GetProductByID", productID).Return(existingProduct, nil)
 
-	updatedProduct := &Product{
+	updatedProduct := &model.Product{
 		Product_id:  productID,
 		Name:        "Test Product",
 		Description: "This is a test product",
@@ -294,7 +295,7 @@ func TestDeleteProduct_ProductFoundAndDeleted(t *testing.T) {
 	productID := "P001"
 
 	// Mock the GetProductByID method
-	existingProduct := &Product{
+	existingProduct := &model.Product{
 		Product_id:  productID,
 		Name:        "Test Product",
 		Description: "This is a test product",
