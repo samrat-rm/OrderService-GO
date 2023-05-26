@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/samrat-rm/OrderService-GO.git/client"
+	"github.com/samrat-rm/OrderService-GO.git/product/client"
 	"github.com/samrat-rm/OrderService-GO.git/routes"
 )
 
