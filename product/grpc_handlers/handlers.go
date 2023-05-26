@@ -1,4 +1,4 @@
-package main
+package grpcHandlers
 
 import (
 	"context"
@@ -7,6 +7,10 @@ import (
 	pb "github.com/samrat-rm/OrderService-GO.git/product/proto"
 	"github.com/samrat-rm/OrderService-GO.git/product/service"
 )
+
+type ProductServiceServer struct {
+	pb.ProductServiceServer
+}
 
 func (s *ProductServiceServer) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductResponse, error) {
 	product, err := service.CreateProduct(req.Product.ProductId, req.Product.Name, req.Product.Description, req.Product.Price, req.Product.Quantity, req.Product.Unit, req.Product.Available)
