@@ -3,13 +3,11 @@ package handler
 import (
 	"crypto/rand"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"math/big"
 	"net/http"
 
-	"github.com/samrat-rm/OrderService-GO.git/orders/model"
 	productModel "github.com/samrat-rm/OrderService-GO.git/orders/utils"
 )
 
@@ -51,35 +49,4 @@ func GetProductAmount(productID string) (*float32, error) {
 	}
 
 	return &product.Price, nil
-}
-
-func CreateOrder(productID string, quantity int32, address string, phoneNumber string) (model.OrderResponse, error) {
-	amount, err := GetProductAmount(productID)
-	if err != nil {
-		return model.OrderResponse{}, err
-	}
-
-	if !model.Initialized {
-		return model.OrderResponse{}, errors.New("DB is not initialized here")
-	}
-	order := &model.Order{
-		Product_id:  productID,
-		Quantity:    quantity,
-		Address:     address,
-		PhoneNumber: phoneNumber,
-		OrderID:     GenerateOrderID(),
-	}
-
-	result := model.OrderDB.Create(&order)
-	if result.Error != nil {
-		return model.OrderResponse{}, result.Error
-	}
-
-	totalAmount := *amount * float32(quantity)
-	response := model.OrderResponse{
-		TotalAmount: totalAmount,
-		OrderID:     order.OrderID,
-	}
-
-	return response, nil
 }

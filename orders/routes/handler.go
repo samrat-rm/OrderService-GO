@@ -10,7 +10,7 @@ import (
 )
 
 func CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
-	var req model.CreateOrderRequest
+	var req pb.CreateOrderRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
@@ -19,16 +19,8 @@ func CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
 
 	OrderServiceClient := client.InitOrderServiceClient()
 
-	// Create gRPC request message
-	request := &pb.CreateOrderRequest{
-		ProductId:   req.ProductID,
-		Address:     req.Address,
-		PhoneNumber: req.PhoneNumber,
-		Quantity:    req.Quantity,
-	}
-
 	// Make gRPC call to CreateOrder method
-	response, err := OrderServiceClient.CreateOrder(r.Context(), request)
+	response, err := OrderServiceClient.CreateOrder(r.Context(), &req)
 	if err != nil {
 		http.Error(w, "Failed to create order", http.StatusInternalServerError)
 		return

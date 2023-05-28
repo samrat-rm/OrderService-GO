@@ -17,7 +17,7 @@ var Initialized bool
 
 func InitialMigrationProduct(dbInstance *gorm.DB) {
 	OrderDB = dbInstance
-	OrderDB.AutoMigrate(&Order{})
+	OrderDB.AutoMigrate(&Order{}, &Products{})
 }
 func initModels() {
 	InitialMigrationProduct(OrderDB)
