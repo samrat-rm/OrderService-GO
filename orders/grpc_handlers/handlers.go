@@ -3,6 +3,7 @@ package grpchandlers
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	handler "github.com/samrat-rm/OrderService-GO.git/orders/controller"
 	pb "github.com/samrat-rm/OrderService-GO.git/orders/proto"
@@ -18,6 +19,8 @@ func (s *OrderServiceServer) CreateOrder(ctx context.Context, req *pb.CreateOrde
 	address := req.Address
 	phoneNumber := req.PhoneNumber
 
+	fmt.Println(req.Address, req.PhoneNumber, req.ProductId, req.Quantity)
+
 	order, err := handler.CreateOrder(productID, quantity, address, phoneNumber)
 
 	if err != nil {
@@ -30,6 +33,5 @@ func (s *OrderServiceServer) CreateOrder(ctx context.Context, req *pb.CreateOrde
 		OrderId:     order.OrderID,
 		TotalAmount: totalAmount,
 	}
-
 	return response, nil
 }

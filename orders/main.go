@@ -19,7 +19,7 @@ func main() {
 
 	err := model.InitDB()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to initialize database: %v", err)
 	}
 	defer model.CloseDB()
 

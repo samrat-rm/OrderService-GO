@@ -13,17 +13,17 @@ import (
 
 var OrderDB *gorm.DB
 var errOrder error
+var Initialized bool
 
 func InitialMigrationProduct(dbInstance *gorm.DB) {
 	OrderDB = dbInstance
 	OrderDB.AutoMigrate(&Order{})
 }
 func initModels() {
-	log.Printf("Initializing models")
 	InitialMigrationProduct(OrderDB)
 }
 func InitDB() error {
-	OrderDNS := fmt.Sprintf("host=localhost port=5434 user=%s password=%s dbname=%s sslmode=disable", "samrat.m_ftc", "sam007s@M", "samrat.m_ftc")
+	OrderDNS := fmt.Sprintf("host=localhost port=5434 user=%s password=%s dbname=%s sslmode=disable", "samrat.m_ftc", "sam007s@M", "quickmart")
 	OrderDB, errOrder = gorm.Open(postgres.Open(OrderDNS), &gorm.Config{})
 	if errOrder != nil {
 		log.Println("Failed to connect to MySQL:", errOrder.Error())
@@ -31,6 +31,7 @@ func InitDB() error {
 	}
 	initModels()
 	log.Println("Connected to the database!")
+	Initialized = true
 	return nil
 }
 

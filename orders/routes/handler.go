@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	handler "github.com/samrat-rm/OrderService-GO.git/orders/controller"
+	"github.com/samrat-rm/OrderService-GO.git/orders/client"
 	"github.com/samrat-rm/OrderService-GO.git/orders/model"
+	pb "github.com/samrat-rm/OrderService-GO.git/orders/proto"
 )
 
 func CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
@@ -16,19 +17,29 @@ func CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orderResponse, err := handler.CreateOrder(req.ProductID, req.Quantity, req.Address, req.PhoneNumber)
+	OrderServiceClient := client.InitOrderServiceClient()
+
+	// Create gRPC request message
+	request := &pb.CreateOrderRequest{
+		ProductId:   req.ProductID,
+		Address:     req.Address,
+		PhoneNumber: req.PhoneNumber,
+		Quantity:    req.Quantity,
+	}
+
+	// Make gRPC call to CreateOrder method
+	response, err := OrderServiceClient.CreateOrder(r.Context(), request)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Failed to create order", http.StatusInternalServerError)
 		return
 	}
 
-	responseData, err := json.Marshal(orderResponse)
-	if err != nil {
-		http.Error(w, "Failed to marshal response", http.StatusInternalServerError)
-		return
+	// Create response payload
+	resp := model.CreateOrderResponse{
+		Order_id:    response.OrderId,
+		TotalAmount: response.TotalAmount,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(responseData)
+	// Send response
+	json.NewEncoder(w).Encode(resp)
 }
