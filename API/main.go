@@ -14,7 +14,6 @@ func main() {
 	ordersServer.InitOrderServiceClient()
 	router := NewRouter()
 	log.Println("Server started on port 8090")
-	// user.InitialMigration()
 	log.Fatal(http.ListenAndServe(":8090", router))
 
 }

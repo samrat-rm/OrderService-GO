@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"math/big"
 	"net/http"
 
@@ -54,17 +53,12 @@ func GetProductAmount(productID string) (*float32, error) {
 	return &product.Price, nil
 }
 
-// func GetProductAmount(id string) (*float32, error) {
-// 	amount := float32(30.0)
-// 	return &amount, nil
-// }
-
 func CreateOrder(productID string, quantity int32, address string, phoneNumber string) (model.OrderResponse, error) {
 	amount, err := GetProductAmount(productID)
 	if err != nil {
 		return model.OrderResponse{}, err
 	}
-	log.Println(model.OrderDB.NowFunc())
+
 	if !model.Initialized {
 		return model.OrderResponse{}, errors.New("DB is not initialized here")
 	}
