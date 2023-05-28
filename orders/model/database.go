@@ -11,36 +11,52 @@ import (
 	"gorm.io/gorm"
 )
 
+var DB *gorm.DB
 var OrderDB *gorm.DB
-var errOrder error
+var ProductDB *gorm.DB
+var err error
 var Initialized bool
 
-func InitialMigrationProduct(dbInstance *gorm.DB) {
+func InitialMigrationOrders(dbInstance *gorm.DB) {
 	OrderDB = dbInstance
 	OrderDB.AutoMigrate(&Order{}, &Products{})
 }
-func initModels() {
-	InitialMigrationProduct(OrderDB)
-}
-func InitDB() error {
-	OrderDNS := fmt.Sprintf("host=localhost port=5434 user=%s password=%s dbname=%s sslmode=disable", "samrat.m_ftc", "sam007s@M", "quickmart")
-	OrderDB, errOrder = gorm.Open(postgres.Open(OrderDNS), &gorm.Config{})
-	if errOrder != nil {
-		log.Println("Failed to connect to MySQL:", errOrder.Error())
-		return errOrder
+
+func InitDB(DNS string) *gorm.DB {
+	DB, err = gorm.Open(postgres.Open(DNS), &gorm.Config{})
+	if err != nil {
+		log.Println("Failed to connect to MySQL:", err.Error())
+		return nil
 	}
-	initModels()
+
 	log.Println("Connected to the database!")
 	Initialized = true
-	return nil
+	return DB
 }
 
-func CloseDB() error {
-	pSQL, err := OrderDB.DB()
+func CloseDB(orderDB, productDB *gorm.DB) error {
+	pSQL, err := orderDB.DB()
 	if err != nil {
 		return errors.New("failed to close the database connection")
 	}
 	pSQL.Close()
+	pSQL2, err := productDB.DB()
+	if err != nil {
+		return errors.New("failed to close the database connection")
+	}
+	pSQL2.Close()
 	log.Printf("Database disconnected ")
 	return nil
+}
+
+func InitializeAllDatabases() (db1 *gorm.DB, db2 *gorm.DB) {
+	OrderDNS := fmt.Sprintf("host=localhost port=5434 user=%s password=%s dbname=%s sslmode=disable", "samrat.m_ftc", "sam007s@M", "quickmart")
+	ProductDNS := fmt.Sprintf("host=localhost port=5434 user=%s password=%s dbname=%s sslmode=disable", "samrat.m_ftc", "sam007s@M", "samrat.m_ftc")
+
+	OrderDB = InitDB(OrderDNS)
+	ProductDB = InitDB(ProductDNS)
+
+	InitialMigrationOrders(OrderDB)
+
+	return OrderDB, ProductDB
 }

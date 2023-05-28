@@ -17,11 +17,8 @@ var (
 
 func main() {
 
-	err := model.InitDB()
-	if err != nil {
-		log.Fatalf("Failed to initialize database: %v", err)
-	}
-	defer model.CloseDB()
+	OrderDB, ProductDB := model.InitializeAllDatabases()
+	defer model.CloseDB(OrderDB, ProductDB)
 
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
