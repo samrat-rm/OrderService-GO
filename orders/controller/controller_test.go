@@ -69,8 +69,8 @@ func TestCreateOrders_Success(t *testing.T) {
 	defer closeMockDatabase(t, db)
 
 	mockDBOrder := new(MockDBOrder)
-	address := "123 Main St"
-	phoneNumber := "123-456-7890"
+	address := "Invalid data"
+	phoneNumber := "inavlid data"
 
 	products := []*model.Product{
 		{
