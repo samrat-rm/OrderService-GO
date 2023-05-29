@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/samrat-rm/OrderService-GO.git/orders/model"
 
 	grpcHandlers "github.com/samrat-rm/OrderService-GO.git/API/handler/order"
@@ -11,13 +14,27 @@ import (
 	"google.golang.org/grpc"
 )
 
-var (
-	port = ":8092"
-)
+func initEnv() {
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatalf("Failed to laod env")
+	}
+}
 
 func main() {
 
-	OrderDB, ProductDB := model.InitializeAllDatabases()
+	initEnv()
+	port := os.Getenv("PORT")
+	database := os.Getenv("Database")
+	databaseOrder := os.Getenv("DatabaseOrder")
+	userName := os.Getenv("UserName")
+	password := os.Getenv("Password")
+
+	productDNS := fmt.Sprintf("host=localhost port=5434 user=%s password=%s dbname=%s sslmode=disable", userName, password, database)
+	orderDNS := fmt.Sprintf("host=localhost port=5434 user=%s password=%s dbname=%s sslmode=disable", userName, password, databaseOrder)
+
+	OrderDB, ProductDB := model.InitializeAllDatabases(productDNS, orderDNS)
 	defer model.CloseDB(OrderDB, ProductDB)
 
 	lis, err := net.Listen("tcp", port)

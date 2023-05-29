@@ -5,8 +5,6 @@ import (
 
 	"errors"
 
-	"fmt"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -49,9 +47,7 @@ func CloseDB(orderDB, productDB *gorm.DB) error {
 	return nil
 }
 
-func InitializeAllDatabases() (db1 *gorm.DB, db2 *gorm.DB) {
-	OrderDNS := fmt.Sprintf("host=localhost port=5434 user=%s password=%s dbname=%s sslmode=disable", "samrat.m_ftc", "sam007s@M", "quickmart")
-	ProductDNS := fmt.Sprintf("host=localhost port=5434 user=%s password=%s dbname=%s sslmode=disable", "samrat.m_ftc", "sam007s@M", "samrat.m_ftc")
+func InitializeAllDatabases(OrderDNS string, ProductDNS string) (db1 *gorm.DB, db2 *gorm.DB) {
 
 	OrderDB = InitDB(OrderDNS)
 	ProductDB = InitDB(ProductDNS)

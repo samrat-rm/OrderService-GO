@@ -5,8 +5,6 @@ import (
 
 	"errors"
 
-	"fmt"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -22,8 +20,8 @@ func initModels() {
 	log.Printf("Initializing models")
 	InitialMigrationProduct(DBProduct)
 }
-func InitDB() error {
-	ProductDNS := fmt.Sprintf("host=localhost port=5434 user=%s password=%s dbname=%s sslmode=disable", "samrat.m_ftc", "sam007s@M", "samrat.m_ftc")
+func InitDB(DNS string) error {
+	ProductDNS := DNS
 	DBProduct, errProduct = gorm.Open(postgres.Open(ProductDNS), &gorm.Config{})
 	if errProduct != nil {
 		log.Println("Failed to connect to MySQL:", errProduct.Error())
