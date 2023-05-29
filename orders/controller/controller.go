@@ -59,6 +59,5 @@ func CreateOrders(address string, phoneNumber string, products []*model.Product)
 			return nil, err
 		}
 	}
-
 	return order, nil
 }
