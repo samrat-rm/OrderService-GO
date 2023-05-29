@@ -16,12 +16,12 @@ message Product {
 }
 
 message CreateOrderResponse{
-    string Order_id =1;
+    uint32 Order_id =1;
     float TotalAmount = 2;
 }
 
 message DeleteOrderRequest{
-    string Order_id=1;
+    uint32 Order_id=1;
 }
 
 message DeleteRequestResponse{

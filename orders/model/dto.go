@@ -12,11 +12,11 @@ type CreateOrderRequest struct {
 }
 
 type Product struct {
-	ProductId string `json:"product_id"`
-	Quantity  int32  `json:"quantity"`
+	ProductID string
+	Quantity  int32
 }
 
 type CreateOrderResponse struct {
-	Order_id    string  `json:"Order_id"`
+	OrderId     uint    `json:"Order_id"`
 	TotalAmount float32 `json:"TotalAmount"`
 }

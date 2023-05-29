@@ -28,7 +28,7 @@ func CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Create response payload
 	resp := model.CreateOrderResponse{
-		Order_id:    response.OrderId,
+		OrderId:     uint(response.OrderId),
 		TotalAmount: response.TotalAmount,
 	}
 
