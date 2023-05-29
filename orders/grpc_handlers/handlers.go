@@ -41,7 +41,7 @@ func (s *OrderServiceServer) CreateOrder(ctx context.Context, req *pb.CreateOrde
 	// Convert the response struct to the corresponding proto message
 	response := &pb.CreateOrderResponse{
 		OrderId:     uint32(order.ID),
-		TotalAmount: 0, // TEMP !!!!
+		TotalAmount: float32(order.TotalAmount),
 	}
 
 	return response, nil

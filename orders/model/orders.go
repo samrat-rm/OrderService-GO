@@ -9,4 +9,5 @@ type Order struct {
 	Address     string     `json:"address"`
 	PhoneNumber string     `json:"phoneNumber"`
 	Products    []Products `gorm:"foreignKey:OrderID"`
+	TotalAmount float64
 }
