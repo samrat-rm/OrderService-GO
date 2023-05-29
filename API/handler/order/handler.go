@@ -1,11 +1,5 @@
 package grpchandlers
 
-// import (
-// 	pb "github.com/samrat-rm/OrderService-GO.git/orders/proto"
-// )
-
-// package grpchandlers
-
 import (
 	"context"
 
@@ -13,10 +7,6 @@ import (
 	pb "github.com/samrat-rm/OrderService-GO.git/orders/proto"
 	"github.com/samrat-rm/OrderService-GO.git/orders/service"
 )
-
-// type OrderServiceServer struct {
-// 	pb.UnimplementedOrderServiceServer
-// }
 
 type OrderServiceServer struct {
 	pb.OrderServiceServer

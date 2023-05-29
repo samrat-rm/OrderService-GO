@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	ordersServer "github.com/samrat-rm/OrderService-GO.git/API/client/order"
+	client "github.com/samrat-rm/OrderService-GO.git/API/client/product"
 	routes "github.com/samrat-rm/OrderService-GO.git/API/routes"
-	"github.com/samrat-rm/OrderService-GO.git/product/client"
 )
 
 func main() {

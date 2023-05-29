@@ -6,7 +6,7 @@ import (
 
 	"github.com/samrat-rm/OrderService-GO.git/orders/model"
 
-	grpcHandlers "github.com/samrat-rm/OrderService-GO.git/orders/grpc_handlers"
+	grpcHandlers "github.com/samrat-rm/OrderService-GO.git/API/handler/order"
 	pb "github.com/samrat-rm/OrderService-GO.git/orders/proto"
 	"google.golang.org/grpc"
 )

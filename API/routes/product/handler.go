@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/samrat-rm/OrderService-GO.git/product/client"
+	client "github.com/samrat-rm/OrderService-GO.git/API/client/product"
 	"github.com/samrat-rm/OrderService-GO.git/product/model"
 	"github.com/samrat-rm/OrderService-GO.git/product/proto"
 )

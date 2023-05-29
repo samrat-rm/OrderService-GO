@@ -4,7 +4,7 @@ import (
 	"github.com/gorilla/mux"
 
 	ordersRoutes "github.com/samrat-rm/OrderService-GO.git/API/routes/order"
-	"github.com/samrat-rm/OrderService-GO.git/product/routes"
+	routes "github.com/samrat-rm/OrderService-GO.git/API/routes/product"
 )
 
 func NewRouter() *mux.Router {
