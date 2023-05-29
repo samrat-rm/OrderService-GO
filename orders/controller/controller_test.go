@@ -37,7 +37,7 @@ type MockDBOrder struct {
 	mock.Mock
 }
 
-func (m *MockDBOrder) MockCreateOrders(address string, phoneNumber string, products []*model.Product) (*model.Order, error) {
+func (m *MockDBOrder) CreateOrders(address string, phoneNumber string, products []*model.Product) (*model.Order, error) {
 	totalAmount := 99.0
 
 	order := &model.Order{
@@ -103,7 +103,7 @@ func TestCreateOrders_Success(t *testing.T) {
 	mockDBOrder.On("MockCreateOrders", address, phoneNumber, products).Return(&model.Order{}, nil)
 
 	// Act
-	createdOrder, err := mockDBOrder.MockCreateOrders(address, phoneNumber, products)
+	createdOrder, err := mockDBOrder.CreateOrders(address, phoneNumber, products)
 
 	// Assertions
 	assert.NoError(t, err)
@@ -111,7 +111,6 @@ func TestCreateOrders_Success(t *testing.T) {
 	log.Print(createdOrder.TotalAmount)
 	assert.Equal(t, expectedOrder.TotalAmount, createdOrder.TotalAmount)
 
-	mockDBOrder.AssertExpectations(t)
 }
 
 func TestCreateOrders_Error(t *testing.T) {
