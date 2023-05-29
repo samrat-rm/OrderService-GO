@@ -1,9 +1,9 @@
-package main
+package routes
 
 import (
 	"github.com/gorilla/mux"
 
-	ordersRoutes "github.com/samrat-rm/OrderService-GO.git/orders/routes"
+	ordersRoutes "github.com/samrat-rm/OrderService-GO.git/API/routes/order"
 	"github.com/samrat-rm/OrderService-GO.git/product/routes"
 )
 

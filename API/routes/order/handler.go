@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/samrat-rm/OrderService-GO.git/orders/client"
-	"github.com/samrat-rm/OrderService-GO.git/orders/model"
+	client "github.com/samrat-rm/OrderService-GO.git/API/client/order"
+	model "github.com/samrat-rm/OrderService-GO.git/API/model/order"
 	pb "github.com/samrat-rm/OrderService-GO.git/orders/proto"
 )
 

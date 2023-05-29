@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+option go_package = "./proto";
+
+package product_service_package ;
+
+
+message Product {
+    string Product_id = 1;
+    string Name = 2;
+    string Unit = 3;
+    int32 Quantity = 4;
+    string Description = 5;
+    bool Available = 6;
+    float Price = 7;
+}
+
+message CreateProductRequest {
+    Product Product = 1;
+}
+
+message CreateProductResponse {
+    string Product_id = 1;
+}
+
+message GetProductRequest {
+    string Product_id = 1;
+}
+
+message GetProductResponse {
+    Product Product = 1;
+}
+
+message ChangeAvailabilityRequest {
+    string Product_id = 1;
+    bool Available = 2;
+}
+
+
+message ChangeAvailabilityResponse {
+    Product Product = 1;
+}
+
+message GetAllProductsRequest {}
+
+message GetAllProductsResponse {
+    repeated Product Products = 1;
+}
+
+message DeleteProductRequest {
+    string Product_id = 1;
+}
+
+message DeleteProductResponse {
+    bool Success = 1;
+}
+
+service ProductService {
+    rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse) {}
+    rpc GetProduct(GetProductRequest) returns (GetProductResponse) {}
+    rpc ChangeAvailability(ChangeAvailabilityRequest) returns (ChangeAvailabilityResponse) {}
+    rpc GetAllProducts(GetAllProductsRequest) returns (GetAllProductsResponse) {}
+    rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse) {}
+}
+
