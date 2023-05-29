@@ -12,26 +12,6 @@ import (
 	"gorm.io/gorm"
 )
 
-func setupMockDatabase(t *testing.T) (*gorm.DB, sqlmock.Sqlmock) {
-	db, mock, err := sqlmock.New()
-	assert.NoError(t, err)
-
-	gormDB, err := gorm.Open(postgres.New(postgres.Config{
-		Conn: db,
-	}), &gorm.Config{})
-	assert.NoError(t, err)
-
-	return gormDB, mock
-}
-
-func closeMockDatabase(t *testing.T, db *gorm.DB) {
-	_ = db.Migrator().DropTable(&model.Product{})
-	sql, err := db.DB()
-	sql.Close()
-
-	assert.NoError(t, err)
-}
-
 type MockDBProduct struct {
 	mock.Mock
 }
@@ -277,18 +257,54 @@ func TestUpdateAvailability(t *testing.T) {
 
 }
 
-// func TestUpdateAvailability_ProductNotFound(t *testing.T) {
+func TestUpdateAvailability_ProductNotFound(t *testing.T) {
 
-// }
+	mockDBProduct := new(MockDBProduct)
 
-// func TestUpdateAvailability_SaveError(t *testing.T) {
+	productID := "Invalid id "
+	available := false
 
-// }
+	expectedError := errors.New("product not found")
+
+	mockDBProduct.On("UpdateAvailability", productID, available).Return(nil, expectedError)
+
+	// Act
+	updated, err := mockDBProduct.UpdateAvailability(productID, available)
+
+	// Assertions
+	assert.Error(t, err)
+	assert.Nil(t, updated)
+	assert.Equal(t, expectedError, err)
+
+	mockDBProduct.AssertExpectations(t)
+}
+
+func TestUpdateAvailability_SaveError(t *testing.T) {
+	mockDBProduct := new(MockDBProduct)
+
+	productID := "Invalid ID"
+	expectedError := errors.New("failed to save in DB")
+	available := false
+
+	mockDBProduct.On("GetProductByID", productID).Return(nil, expectedError)
+	mockDBProduct.On("UpdateAvailability", productID, available).Return(nil, expectedError)
+
+	// Act
+	mockDBProduct.GetProductByID(productID)
+	result, err := mockDBProduct.UpdateAvailability(productID, available)
+
+	// Assertions
+	assert.Error(t, err)
+	assert.Nil(t, result)
+	assert.Equal(t, expectedError, err)
+
+	mockDBProduct.AssertExpectations(t)
+}
 
 func TestDeleteProduct_ProductFoundAndDeleted(t *testing.T) {
 	// Set up the test
-	db, _ := setupMockDatabase(t)
-	defer closeMockDatabase(t, db)
+	// db, _ := setupMockDatabase(t)
+	// defer closeMockDatabase(t, db)
 
 	mockDBProduct := new(MockDBProduct)
 
@@ -317,6 +333,41 @@ func TestDeleteProduct_ProductFoundAndDeleted(t *testing.T) {
 
 }
 
-// func TestDeleteProduct_ProductNotFound(t *testing.T) {
+func TestDeleteProduct_ProductNotFound(t *testing.T) {
+	mockDBProduct := new(MockDBProduct)
 
-// }
+	productID := "Invalid ID"
+	expectedError := errors.New("product not found")
+
+	mockDBProduct.On("GetProductByID", productID).Return(nil, expectedError)
+
+	// Act
+	result, err := mockDBProduct.GetProductByID(productID)
+
+	// Assertions
+	assert.Error(t, err)
+	assert.Nil(t, result)
+	assert.Equal(t, expectedError, err)
+
+	mockDBProduct.AssertExpectations(t)
+}
+
+func setupMockDatabase(t *testing.T) (*gorm.DB, sqlmock.Sqlmock) {
+	db, mock, err := sqlmock.New()
+	assert.NoError(t, err)
+
+	gormDB, err := gorm.Open(postgres.New(postgres.Config{
+		Conn: db,
+	}), &gorm.Config{})
+	assert.NoError(t, err)
+
+	return gormDB, mock
+}
+
+func closeMockDatabase(t *testing.T, db *gorm.DB) {
+	_ = db.Migrator().DropTable(&model.Product{})
+	sql, err := db.DB()
+	sql.Close()
+
+	assert.NoError(t, err)
+}

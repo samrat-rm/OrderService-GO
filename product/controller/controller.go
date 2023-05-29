@@ -55,6 +55,10 @@ func UpdateAvailability(productID string, available bool) (*model.Product, error
 		return nil, err
 	}
 
+	if product == nil {
+		return nil, errors.New("product not found")
+	}
+
 	product.Available = available
 
 	result := model.DBProduct.Save(&product)
@@ -77,7 +81,9 @@ func DeleteProduct(productID string) error {
 	if err != nil {
 		return err
 	}
-
+	if product == nil {
+		return errors.New("product not found")
+	}
 	result := model.DBProduct.Delete(&product)
 	if result.Error != nil {
 		return result.Error
