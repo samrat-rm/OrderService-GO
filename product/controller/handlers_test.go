@@ -81,8 +81,8 @@ func (m *MockDBProduct) DeleteProduct(productID string) error {
 
 func TestCreateProductShouldReturnProduct_id(t *testing.T) {
 	// Arrange
-	db, _ := setupMockDatabase(t)
-	defer closeMockDatabase(t, db)
+	// db, _ := setupMockDatabase(t)
+	// defer closeMockDatabase(t, db)
 
 	mockDBProduct := new(MockDBProduct)
 
@@ -111,8 +111,8 @@ func TestCreateProductShouldReturnProduct_id(t *testing.T) {
 
 func TestCreateProductShouldReturnError(t *testing.T) {
 	// Arrange
-	db, _ := setupMockDatabase(t)
-	defer closeMockDatabase(t, db)
+	// db, _ := setupMockDatabase(t)
+	// defer closeMockDatabase(t, db)
 
 	mockDBProduct := new(MockDBProduct)
 
@@ -140,8 +140,8 @@ func TestCreateProductShouldReturnError(t *testing.T) {
 }
 func TestGetProductsShouldReturnProducts(t *testing.T) {
 	// Arrange
-	db, _ := setupMockDatabase(t)
-	defer closeMockDatabase(t, db)
+	// db, _ := setupMockDatabase(t)
+	// defer closeMockDatabase(t, db)
 
 	mockDBProduct := new(MockDBProduct)
 
@@ -180,8 +180,8 @@ func TestGetProductsShouldReturnProducts(t *testing.T) {
 }
 func TestGetProductByIDShouldReturnProduct(t *testing.T) {
 	// Arrange
-	db, _ := setupMockDatabase(t)
-	defer closeMockDatabase(t, db)
+	// db, _ := setupMockDatabase(t)
+	// defer closeMockDatabase(t, db)
 
 	mockDBProduct := new(MockDBProduct)
 
@@ -211,8 +211,8 @@ func TestGetProductByIDShouldReturnProduct(t *testing.T) {
 
 func TestGetProductByIDShouldReturnNotFoundError(t *testing.T) {
 	// Arrange
-	db, _ := setupMockDatabase(t)
-	defer closeMockDatabase(t, db)
+	// db, _ := setupMockDatabase(t)
+	// defer closeMockDatabase(t, db)
 
 	mockDBProduct := new(MockDBProduct)
 
@@ -234,8 +234,8 @@ func TestGetProductByIDShouldReturnNotFoundError(t *testing.T) {
 
 func TestUpdateAvailability(t *testing.T) {
 	// Arrange
-	db, _ := setupMockDatabase(t)
-	defer closeMockDatabase(t, db)
+	// db, _ := setupMockDatabase(t)
+	// defer closeMockDatabase(t, db)
 
 	mockDBProduct := new(MockDBProduct)
 

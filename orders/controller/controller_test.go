@@ -58,6 +58,10 @@ func (m *MockDBOrder) CreateOrders(address string, phoneNumber string, products 
 	return order, nil
 }
 
+func (m *MockDBOrder) FindTotalAmount(products []*model.Product) (float64, error) {
+	return 49.95, nil
+}
+
 func (m *MockDBOrder) MockCreateOrdersError(address string, phoneNumber string, products []*model.Product) (*model.Order, error) {
 
 	return nil, errors.New("failed to create order")
@@ -65,8 +69,8 @@ func (m *MockDBOrder) MockCreateOrdersError(address string, phoneNumber string, 
 
 func TestCreateOrders_Success(t *testing.T) {
 	// Arrange
-	db, _ := setupMockDatabase(t)
-	defer closeMockDatabase(t, db)
+	// db, _ := setupMockDatabase(t)
+	// defer closeMockDatabase(t, db)
 
 	mockDBOrder := new(MockDBOrder)
 	address := "Invalid data"
@@ -115,8 +119,8 @@ func TestCreateOrders_Success(t *testing.T) {
 
 func TestCreateOrders_Error(t *testing.T) {
 	// Arrange
-	db, _ := setupMockDatabase(t)
-	defer closeMockDatabase(t, db)
+	// db, _ := setupMockDatabase(t)
+	// defer closeMockDatabase(t, db)
 
 	mockDBOrder := new(MockDBOrder)
 	address := "123 Main St"
@@ -145,5 +149,33 @@ func TestCreateOrders_Error(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, createdOrder)
 	assert.Equal(t, expectedError, err)
+
+}
+
+func TestFindTotalAmount(t *testing.T) {
+	// Create a mock database
+	mockDBOrder := new(MockDBOrder)
+
+	// Create a mock product model
+	// mockProductModel := &model.Product{}
+
+	// Create sample products
+	products := []*model.Product{
+		{
+			ProductID: "P001",
+			Quantity:  2,
+		},
+		{
+			ProductID: "P002",
+			Quantity:  3,
+		},
+	}
+
+	mockDBOrder.On("FindTotalAmount", products).Return(49.95, nil)
+
+	totalAmount, err := mockDBOrder.FindTotalAmount(products)
+
+	assert.NoError(t, err)
+	assert.Equal(t, 49.95, totalAmount)
 
 }
