@@ -38,36 +38,33 @@ func (s *AuthServiceServer) SignUpUser(ctx context.Context, req *pb.SignUpReques
 }
 
 func (s *AuthServiceServer) LoginUser(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
-	// Retrieve the user from the database based on the provided email
+
 	user, err := service.GetUserByEmail(req.Email)
 	if err != nil {
-		// User not found or other error occurred
+
 		return &pb.LoginResponse{
 			StatusCode: 404,
 			Message:    "User not found",
 		}, nil
 	}
 
-	// Verify the password by comparing the hashed password
 	if !service.VerifyPassword(req.Password, user.Password) {
-		// Password verification failed
+
 		return &pb.LoginResponse{
 			StatusCode: 401,
 			Message:    "Invalid credentials",
 		}, nil
 	}
 
-	// Generate a token
 	token, err := service.GenerateToken(user.ID, user.Access)
 	if err != nil {
-		// Error occurred while generating the token
+
 		return &pb.LoginResponse{
 			StatusCode: 500,
 			Message:    "Failed to generate token",
 		}, nil
 	}
 
-	// Return the generated token
 	return &pb.LoginResponse{
 		StatusCode: 200,
 		Message:    "Login successful",
