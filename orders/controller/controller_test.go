@@ -27,6 +27,15 @@ func (m *MockDBOrder) FindTotalAmount(products []*model.Product) (float64, error
 	return args.Get(0).(float64), args.Error(1)
 }
 
+func (m *MockDBOrder) DeleteOrder(orderID uint32) (*model.DeleteRequestResponse, error) {
+	args := m.Called(orderID)
+	result := args.Get(0)
+	if result == nil {
+		return nil, args.Error(1)
+	}
+	return result.(*model.DeleteRequestResponse), args.Error(1)
+}
+
 func TestCreateOrders_Success(t *testing.T) {
 	// Arrange
 	mockDBOrder := new(MockDBOrder)
@@ -135,4 +144,46 @@ func TestFindTotalAmount(t *testing.T) {
 	assert.Equal(t, 49.95, totalAmount)
 	mockDBOrder.AssertExpectations(t)
 
+}
+
+func TestDeleteOrder_Success(t *testing.T) {
+	// Arrange
+	mockDBOrder := new(MockDBOrder)
+	orderID := uint32(123)
+
+	expectedResponse := &model.DeleteRequestResponse{
+		Status: true,
+	}
+
+	mockDBOrder.On("DeleteOrder", orderID).Return(expectedResponse, nil)
+
+	// Act
+	response, err := mockDBOrder.DeleteOrder(orderID)
+
+	// Assertions
+	assert.NoError(t, err)
+	assert.NotNil(t, response)
+	assert.True(t, response.Status)
+
+	mockDBOrder.AssertExpectations(t)
+}
+
+func TestDeleteOrder_Error(t *testing.T) {
+	// Arrange
+	mockDBOrder := new(MockDBOrder)
+	orderID := uint32(123)
+
+	expectedError := errors.New("failed to delete order")
+
+	mockDBOrder.On("DeleteOrder", orderID).Return(nil, expectedError)
+
+	// Act
+	response, err := mockDBOrder.DeleteOrder(orderID)
+
+	// Assertions
+	assert.Error(t, err)
+	assert.Nil(t, response)
+	assert.Equal(t, expectedError, err)
+
+	mockDBOrder.AssertExpectations(t)
 }
