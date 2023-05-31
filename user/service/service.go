@@ -122,3 +122,29 @@ func CheckAdminAccess(tokenString string, secretKey string) (bool, error) {
 
 	return false, nil
 }
+
+func CheckUserAccess(tokenString string, secretKey string) (bool, error) {
+	// Validate and parse the token
+	token, err := ValidateToken(tokenString, secretKey)
+	if err != nil {
+		return false, err
+	}
+
+	// Check the access claim
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return false, errors.New("invalid token claims")
+	}
+
+	access, ok := claims["access"].(string)
+	if !ok {
+		return false, errors.New("access claim not found or invalid")
+	}
+
+	// Check if access is CUSTOMER
+	if access == "CUSTOMER" {
+		return true, nil
+	}
+
+	return false, nil
+}
