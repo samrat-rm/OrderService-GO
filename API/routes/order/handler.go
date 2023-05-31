@@ -35,3 +35,28 @@ func CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
 	// Send response
 	json.NewEncoder(w).Encode(resp)
 }
+func DeleteOrderHandler(w http.ResponseWriter, r *http.Request) {
+	var req pb.DeleteOrderRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
+	OrderServiceClient := client.InitOrderServiceClient()
+
+	// Make gRPC call to DeleteOrder method
+	response, err := OrderServiceClient.DeleteOrder(r.Context(), &req)
+	if err != nil {
+		http.Error(w, "Failed to delete order", http.StatusInternalServerError)
+		return
+	}
+
+	// Create response payload
+	resp := model.DeleteRequestResponse{
+		Status: response.Status,
+	}
+
+	// Send response
+	json.NewEncoder(w).Encode(resp)
+}

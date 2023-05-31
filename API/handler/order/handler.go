@@ -36,3 +36,21 @@ func (s *OrderServiceServer) CreateOrder(ctx context.Context, req *pb.CreateOrde
 
 	return response, nil
 }
+
+func (s *OrderServiceServer) DeleteOrder(ctx context.Context, req *pb.DeleteOrderRequest) (*pb.DeleteRequestResponse, error) {
+	// Delete the order from the database based on the provided order ID
+	orderID := req.OrderId
+
+	// Call the deleteOrder method from your service or repository layer to delete the order
+	deleteResponse, err := service.DeleteOrders(orderID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create the response message indicating the status of the delete request
+	response := &pb.DeleteRequestResponse{
+		Status: deleteResponse.Status,
+	}
+
+	return response, nil
+}

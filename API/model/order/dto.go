@@ -28,3 +28,7 @@ type DeleteProductRequest struct {
 type DeleteProductResponse struct {
 	Success bool `json:"success,omitempty"`
 }
+
+type DeleteRequestResponse struct {
+	Status bool `json:"status"`
+}
