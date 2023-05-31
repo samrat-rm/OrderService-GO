@@ -26,15 +26,25 @@ message LoginResponse {
     string token = 3;
 }
 
-message ValidateTokenRequest {
+message ValidateAdminTokenRequest {
     string token = 1;
     Access access = 2;
 }
 
-message ValidateTokenResponse {
+message ValidateAdminTokenResponse {
     int32 statusCode = 1;
     string message = 2;
 }
+message ValidateUserTokenRequest {
+    string token = 1;
+    Access access = 2;
+}
+
+message ValidateUserTokenResponse {
+    int32 statusCode = 1;
+    string message = 2;
+}
+
 
 enum Access {
     CUSTOMER = 0;
@@ -44,5 +54,6 @@ enum Access {
 service AuthService {
     rpc SignUpUser(SignUpRequest) returns (SignUpResponse) {}
     rpc LoginUser(LoginRequest) returns (LoginResponse) {}
-    rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse) {}
+    rpc ValidateTokenForAdmin(ValidateAdminTokenRequest) returns (ValidateAdminTokenResponse) {}
+    rpc ValidateTokenForUser(ValidateUserTokenRequest) returns (ValidateUserTokenResponse) {}
 }

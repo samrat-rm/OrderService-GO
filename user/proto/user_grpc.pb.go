@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthService_SignUpUser_FullMethodName    = "/AuthService/SignUpUser"
-	AuthService_LoginUser_FullMethodName     = "/AuthService/LoginUser"
-	AuthService_ValidateToken_FullMethodName = "/AuthService/ValidateToken"
+	AuthService_SignUpUser_FullMethodName            = "/AuthService/SignUpUser"
+	AuthService_LoginUser_FullMethodName             = "/AuthService/LoginUser"
+	AuthService_ValidateTokenForAdmin_FullMethodName = "/AuthService/ValidateTokenForAdmin"
+	AuthService_ValidateTokenForUser_FullMethodName  = "/AuthService/ValidateTokenForUser"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -30,7 +31,8 @@ const (
 type AuthServiceClient interface {
 	SignUpUser(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error)
 	LoginUser(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*ValidateTokenResponse, error)
+	ValidateTokenForAdmin(ctx context.Context, in *ValidateAdminTokenRequest, opts ...grpc.CallOption) (*ValidateAdminTokenResponse, error)
+	ValidateTokenForUser(ctx context.Context, in *ValidateUserTokenRequest, opts ...grpc.CallOption) (*ValidateUserTokenResponse, error)
 }
 
 type authServiceClient struct {
@@ -59,9 +61,18 @@ func (c *authServiceClient) LoginUser(ctx context.Context, in *LoginRequest, opt
 	return out, nil
 }
 
-func (c *authServiceClient) ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*ValidateTokenResponse, error) {
-	out := new(ValidateTokenResponse)
-	err := c.cc.Invoke(ctx, AuthService_ValidateToken_FullMethodName, in, out, opts...)
+func (c *authServiceClient) ValidateTokenForAdmin(ctx context.Context, in *ValidateAdminTokenRequest, opts ...grpc.CallOption) (*ValidateAdminTokenResponse, error) {
+	out := new(ValidateAdminTokenResponse)
+	err := c.cc.Invoke(ctx, AuthService_ValidateTokenForAdmin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) ValidateTokenForUser(ctx context.Context, in *ValidateUserTokenRequest, opts ...grpc.CallOption) (*ValidateUserTokenResponse, error) {
+	out := new(ValidateUserTokenResponse)
+	err := c.cc.Invoke(ctx, AuthService_ValidateTokenForUser_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +85,8 @@ func (c *authServiceClient) ValidateToken(ctx context.Context, in *ValidateToken
 type AuthServiceServer interface {
 	SignUpUser(context.Context, *SignUpRequest) (*SignUpResponse, error)
 	LoginUser(context.Context, *LoginRequest) (*LoginResponse, error)
-	ValidateToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error)
+	ValidateTokenForAdmin(context.Context, *ValidateAdminTokenRequest) (*ValidateAdminTokenResponse, error)
+	ValidateTokenForUser(context.Context, *ValidateUserTokenRequest) (*ValidateUserTokenResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -88,8 +100,11 @@ func (UnimplementedAuthServiceServer) SignUpUser(context.Context, *SignUpRequest
 func (UnimplementedAuthServiceServer) LoginUser(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoginUser not implemented")
 }
-func (UnimplementedAuthServiceServer) ValidateToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ValidateToken not implemented")
+func (UnimplementedAuthServiceServer) ValidateTokenForAdmin(context.Context, *ValidateAdminTokenRequest) (*ValidateAdminTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateTokenForAdmin not implemented")
+}
+func (UnimplementedAuthServiceServer) ValidateTokenForUser(context.Context, *ValidateUserTokenRequest) (*ValidateUserTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateTokenForUser not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -140,20 +155,38 @@ func _AuthService_LoginUser_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_ValidateToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ValidateTokenRequest)
+func _AuthService_ValidateTokenForAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateAdminTokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).ValidateToken(ctx, in)
+		return srv.(AuthServiceServer).ValidateTokenForAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthService_ValidateToken_FullMethodName,
+		FullMethod: AuthService_ValidateTokenForAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).ValidateToken(ctx, req.(*ValidateTokenRequest))
+		return srv.(AuthServiceServer).ValidateTokenForAdmin(ctx, req.(*ValidateAdminTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_ValidateTokenForUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateUserTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).ValidateTokenForUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_ValidateTokenForUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).ValidateTokenForUser(ctx, req.(*ValidateUserTokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -174,8 +207,12 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_LoginUser_Handler,
 		},
 		{
-			MethodName: "ValidateToken",
-			Handler:    _AuthService_ValidateToken_Handler,
+			MethodName: "ValidateTokenForAdmin",
+			Handler:    _AuthService_ValidateTokenForAdmin_Handler,
+		},
+		{
+			MethodName: "ValidateTokenForUser",
+			Handler:    _AuthService_ValidateTokenForUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

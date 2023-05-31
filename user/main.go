@@ -47,6 +47,7 @@ func main() {
 		log.Fatalf("Faile to start the server %v", err.Error())
 	}
 	grpcServer := grpc.NewServer()
+
 	pb.RegisterAuthServiceServer(grpcServer, &grpcHandlers.AuthServiceServer{})
 	log.Printf("Server satrted at %v", lis.Addr())
 	if err := grpcServer.Serve(lis); err != nil {

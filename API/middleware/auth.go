@@ -26,13 +26,13 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		authClient := client.InitAuthServiceClient()
 
 		// Prepare the gRPC request message
-		request := &pb.ValidateTokenRequest{
+		request := &pb.ValidateAdminTokenRequest{
 			Token:  token,
 			Access: pb.Access_ADMIN, // Change to CUSTOMER or ADMIN based on the required access level
 		}
 
 		// Call the gRPC ValidateToken method
-		response, err := authClient.ValidateToken(context.Background(), request)
+		response, err := authClient.ValidateTokenForAdmin(context.Background(), request)
 		if err != nil {
 			log.Println(err.Error())
 			http.Error(w, "Failed to validate token", http.StatusInternalServerError)

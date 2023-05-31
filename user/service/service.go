@@ -89,8 +89,6 @@ func ValidateToken(tokenString string, secretKey string) (*jwt.Token, error) {
 		return nil, err
 	}
 
-	log.Println(token.Valid, token)
-
 	// Check if the token is valid
 	if !token.Valid {
 		return nil, errors.New("invalid token")

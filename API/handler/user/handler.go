@@ -72,7 +72,7 @@ func (s *AuthServiceServer) LoginUser(ctx context.Context, req *pb.LoginRequest)
 	}, nil
 }
 
-func (s *AuthServiceServer) ValidateToken(ctx context.Context, req *pb.ValidateTokenRequest) (*pb.ValidateTokenResponse, error) {
+func (s *AuthServiceServer) ValidateToken(ctx context.Context, req *pb.ValidateAdminTokenRequest) (*pb.ValidateAdminTokenResponse, error) {
 	// Implement the logic to validate the token and check the access level here
 
 	// Get the token from the request
@@ -86,7 +86,7 @@ func (s *AuthServiceServer) ValidateToken(ctx context.Context, req *pb.ValidateT
 
 	// Check if the token is valid
 	if err != nil {
-		return &pb.ValidateTokenResponse{
+		return &pb.ValidateAdminTokenResponse{
 			StatusCode: 401, // Unauthorized
 			Message:    "Invalid token",
 		}, nil
@@ -97,7 +97,7 @@ func (s *AuthServiceServer) ValidateToken(ctx context.Context, req *pb.ValidateT
 		// Check if the user has admin access (implement your access level checking logic)
 		hasAdminAccess, err := service.CheckAdminAccess(token, secretKey)
 		if !hasAdminAccess || err != nil {
-			return &pb.ValidateTokenResponse{
+			return &pb.ValidateAdminTokenResponse{
 				StatusCode: 401, // Unauthorized
 				Message:    "Admin access required",
 			}, nil
@@ -105,7 +105,7 @@ func (s *AuthServiceServer) ValidateToken(ctx context.Context, req *pb.ValidateT
 	}
 
 	// Token validation successful
-	return &pb.ValidateTokenResponse{
+	return &pb.ValidateAdminTokenResponse{
 		StatusCode: 200, // OK
 		Message:    "Token validation successful",
 	}, nil

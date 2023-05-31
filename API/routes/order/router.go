@@ -14,5 +14,5 @@ func RegisterOrderRoutes(router *mux.Router) {
 	orderRouter.Handle("", middleware.AuthMiddleware(http.HandlerFunc(CreateOrderHandler))).Methods("POST")
 
 	// Define other routes and handlers
-	orderRouter.HandleFunc("", DeleteOrderHandler).Methods("DELETE")
+	orderRouter.Handle("", middleware.AuthMiddleware(http.HandlerFunc(DeleteOrderHandler))).Methods("DELETE")
 }
