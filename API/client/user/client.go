@@ -1,4 +1,4 @@
-package user
+package client
 
 import (
 	"log"
@@ -16,7 +16,7 @@ const (
 	port = ":8093"
 )
 
-func InitProductServiceClient() pb.AuthServiceClient {
+func InitAuthServiceClient() pb.AuthServiceClient {
 	conn, err := grpc.Dial("localhost"+port, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	// defer conn.Close()
 	if err != nil {
