@@ -141,8 +141,8 @@ func CheckUserAccess(tokenString string, secretKey string) (bool, error) {
 		return false, errors.New("access claim not found or invalid")
 	}
 
-	// Check if access is CUSTOMER
-	if access == "CUSTOMER" {
+	// Check if access available
+	if access == "CUSTOMER" || access == "ADMIN" {
 		return true, nil
 	}
 

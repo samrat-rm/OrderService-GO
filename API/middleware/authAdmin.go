@@ -41,7 +41,7 @@ func AuthAdminMiddleware(next http.Handler) http.Handler {
 
 		// Check the response status code
 		if response.StatusCode != 200 {
-
+			log.Println("here")
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
