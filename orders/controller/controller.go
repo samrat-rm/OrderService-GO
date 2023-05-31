@@ -22,10 +22,9 @@ func FindTotalAmount(products []*model.Product) (float64, error) {
 		var productModel productModel.Product
 		err := model.ProductDB.Where("product_id = ?", product.ProductID).First(&productModel).Error
 		if err != nil {
-			log.Print("Error fetching product:", err)
+			log.Print("Error fetching product: ", err, "..........")
 			return 0.0, err
 		}
-
 		productAmount := float32(product.Quantity) * productModel.Price
 		totalAmount += float64(productAmount)
 

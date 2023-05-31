@@ -47,7 +47,7 @@ func CloseDB(orderDB, productDB *gorm.DB) error {
 	return nil
 }
 
-func InitializeAllDatabases(OrderDNS string, ProductDNS string) (db1 *gorm.DB, db2 *gorm.DB) {
+func InitializeAllDatabases(ProductDNS string, OrderDNS string) (db1 *gorm.DB, db2 *gorm.DB) {
 
 	OrderDB = InitDB(OrderDNS)
 	ProductDB = InitDB(ProductDNS)

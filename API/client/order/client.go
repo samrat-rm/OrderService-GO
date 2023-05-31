@@ -19,7 +19,6 @@ type OrderServiceClient struct {
 
 func InitOrderServiceClient() pb.OrderServiceClient {
 	conn, err := grpc.Dial("localhost"+port, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	// defer conn.Close()
 	if err != nil {
 		log.Fatalf("Failed to connect to server %v", err.Error())
 	}

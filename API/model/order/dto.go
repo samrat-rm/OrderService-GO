@@ -20,3 +20,11 @@ type CreateOrderResponse struct {
 	OrderId     uint    `json:"Order_id"`
 	TotalAmount float32 `json:"TotalAmount"`
 }
+
+type DeleteProductRequest struct {
+	ProductID string `json:"productId,omitempty"`
+}
+
+type DeleteProductResponse struct {
+	Success bool `json:"success,omitempty"`
+}
