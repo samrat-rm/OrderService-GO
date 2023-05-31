@@ -2,6 +2,7 @@ package routes
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	client "github.com/samrat-rm/OrderService-GO.git/API/client/user"
@@ -14,6 +15,7 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 	var req pb.SignUpRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
+		log.Println(err.Error())
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
