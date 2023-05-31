@@ -136,23 +136,3 @@ func TestFindTotalAmount(t *testing.T) {
 	mockDBOrder.AssertExpectations(t)
 
 }
-
-// func setupMockDatabase(t *testing.T) (*gorm.DB, sqlmock.Sqlmock) {
-// 	db, mock, err := sqlmock.New()
-// 	assert.NoError(t, err)
-
-// 	gormDB, err := gorm.Open(postgres.New(postgres.Config{
-// 		Conn: db,
-// 	}), &gorm.Config{})
-// 	assert.NoError(t, err)
-
-// 	return gormDB, mock
-// }
-
-// func closeMockDatabase(t *testing.T, db *gorm.DB) {
-// 	_ = db.Migrator().DropTable(&model.Order{})
-// 	sql, err := db.DB()
-// 	sql.Close()
-
-// 	assert.NoError(t, err)
-// }

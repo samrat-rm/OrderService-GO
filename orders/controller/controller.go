@@ -60,3 +60,22 @@ func CreateOrders(address string, phoneNumber string, products []*model.Product)
 	}
 	return order, nil
 }
+
+func DeleteOrder(orderID uint32) (*model.DeleteRequestResponse, error) {
+	// Check if the order exists
+	order := &model.Order{}
+	err := model.OrderDB.Where("id = ?", orderID).First(order).Error
+	if err != nil {
+		log.Printf("Error finding order with ID %d: %s", orderID, err)
+		return &model.DeleteRequestResponse{Status: false}, err
+	}
+
+	// Delete the order from the database
+	err = model.OrderDB.Delete(order).Error
+	if err != nil {
+		log.Printf("Error deleting order with ID %d: %s", orderID, err)
+		return &model.DeleteRequestResponse{Status: false}, err
+	}
+
+	return &model.DeleteRequestResponse{Status: true}, nil
+}
