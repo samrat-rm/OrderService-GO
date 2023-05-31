@@ -9,10 +9,11 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/samrat-rm/OrderService-GO.git/user/controller"
 	"github.com/samrat-rm/OrderService-GO.git/user/model"
+	"github.com/samrat-rm/OrderService-GO.git/user/utils"
 )
 
 func CreateUser(name, email, password, phoneNumber, access string) (*model.User, error) {
-	hashedPassword := hashPassword(password)
+	hashedPassword := utils.HashPassword(password)
 
 	user := &model.User{
 		Name:        name,
@@ -32,10 +33,6 @@ func CreateUser(name, email, password, phoneNumber, access string) (*model.User,
 	return user, nil
 }
 
-func hashPassword(password string) string {
-	hash := md5.Sum([]byte(password))
-	return hex.EncodeToString(hash[:])
-}
 func GetUserByEmail(email string) (*model.User, error) {
 	var user model.User
 	user, err := controller.GetUserByEmail(email)
