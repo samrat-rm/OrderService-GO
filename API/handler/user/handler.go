@@ -38,32 +38,39 @@ func (s *AuthServiceServer) SignUpUser(ctx context.Context, req *pb.SignUpReques
 }
 
 func (s *AuthServiceServer) LoginUser(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
-	// Implement the logic for user login here
-	// You can access the request parameters using req.Email and req.Password
-
-	// Perform the necessary operations such as validating credentials, generating a token, generating a response, etc.
-
-	// Create the response message
-	response := &pb.LoginResponse{
-		StatusCode: 200,                // Set the appropriate status code
-		Message:    "Login successful", // Set the appropriate message
-		Token:      "generated-token",  // Set the generated token value
+	// Retrieve the user from the database based on the provided email
+	user, err := service.GetUserByEmail(req.Email)
+	if err != nil {
+		// User not found or other error occurred
+		return &pb.LoginResponse{
+			StatusCode: 404,
+			Message:    "User not found",
+		}, nil
 	}
 
-	return response, nil
-}
-
-func (s *AuthServiceServer) ValidateToken(ctx context.Context, req *pb.ValidateTokenRequest) (*pb.ValidateTokenResponse, error) {
-	// Implement the logic for token validation here
-	// You can access the request parameters using req.Token and req.Access
-
-	// Perform the necessary operations such as validating the token, checking access level, generating a response, etc.
-
-	// Create the response message
-	response := &pb.ValidateTokenResponse{
-		StatusCode: 200,                           // Set the appropriate status code
-		Message:    "Token validation successful", // Set the appropriate message
+	// Verify the password by comparing the hashed password
+	if !service.VerifyPassword(req.Password, user.Password) {
+		// Password verification failed
+		return &pb.LoginResponse{
+			StatusCode: 401,
+			Message:    "Invalid credentials",
+		}, nil
 	}
 
-	return response, nil
+	// Generate a token
+	token, err := service.GenerateToken(user.ID, user.Access)
+	if err != nil {
+		// Error occurred while generating the token
+		return &pb.LoginResponse{
+			StatusCode: 500,
+			Message:    "Failed to generate token",
+		}, nil
+	}
+
+	// Return the generated token
+	return &pb.LoginResponse{
+		StatusCode: 200,
+		Message:    "Login successful",
+		Token:      token,
+	}, nil
 }
