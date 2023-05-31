@@ -74,3 +74,53 @@ func GenerateToken(userID uint, access string) (string, error) {
 
 	return tokenString, nil
 }
+func ValidateToken(tokenString string, secretKey string) (*jwt.Token, error) {
+
+	// Parse the token without verifying the signature
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Set the signing method and secret key
+		if token.Method.Alg() != jwt.SigningMethodHS256.Alg() {
+			return nil, errors.New("invalid signing method")
+		}
+		return []byte(secretKey), nil
+	})
+	if err != nil {
+		log.Print(err.Error())
+		return nil, err
+	}
+
+	log.Println(token.Valid, token)
+
+	// Check if the token is valid
+	if !token.Valid {
+		return nil, errors.New("invalid token")
+	}
+
+	return token, nil
+}
+
+func CheckAdminAccess(tokenString string, secretKey string) (bool, error) {
+	// Validate and parse the token
+	token, err := ValidateToken(tokenString, secretKey)
+	if err != nil {
+		return false, err
+	}
+
+	// Check the access claim
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return false, errors.New("invalid token claims")
+	}
+
+	access, ok := claims["access"].(string)
+	if !ok {
+		return false, errors.New("access claim not found or invalid")
+	}
+
+	// Check if access is ADMIN
+	if access == "ADMIN" {
+		return true, nil
+	}
+
+	return false, nil
+}
