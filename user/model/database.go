@@ -10,7 +10,7 @@ import (
 )
 
 var UserDB *gorm.DB
-var errProduct error
+var errUser error
 
 func InitialMigrationProduct(dbInstance *gorm.DB) {
 	UserDB = dbInstance
@@ -22,10 +22,10 @@ func initModels() {
 }
 func InitDB(DNS string) error {
 	UserDNS := DNS
-	UserDB, errProduct = gorm.Open(postgres.Open(UserDNS), &gorm.Config{})
-	if errProduct != nil {
-		log.Println("Failed to connect to MySQL:", errProduct.Error())
-		return errProduct
+	UserDB, errUser = gorm.Open(postgres.Open(UserDNS), &gorm.Config{})
+	if errUser != nil {
+		log.Println("Failed to connect to MySQL:", errUser.Error())
+		return errUser
 	}
 	initModels()
 	log.Println("Connected to the database!")
